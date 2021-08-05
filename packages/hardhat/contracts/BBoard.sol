@@ -28,7 +28,7 @@ contract BBoard is ReentrancyGuard {
     bool sold;
   }
 
-    //map where itemId returns the marketItem
+    //map where bblockId returns the BBlock
     mapping(uint256 => BBlock) private idToBBlock;
 
   function getBasefee() public view returns(uint256){
