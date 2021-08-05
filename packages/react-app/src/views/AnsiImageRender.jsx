@@ -18,7 +18,7 @@ export default function AnsiImageRender() {
     })
       .then(response => response.text())
       .then(response => {
-        debugger;
+        //debugger;
         console.log(response.length);
 
         const ansi_up = new AnsiUp();
