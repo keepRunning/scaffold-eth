@@ -3,6 +3,7 @@ import { utils } from "ethers";
 import { Button, Card, DatePicker, Divider, Input, List, Progress, Slider, Spin, Switch } from "antd";
 import React, { useState } from "react";
 import { Address, Balance } from "../components";
+import AnsiImageRender from "./AnsiImageRender"
 
 //import Button from "@material-ui/core/Button";
 import { makeStyles } from '@material-ui/core/styles';
@@ -53,7 +54,7 @@ function AutoGrid() {
             </ul>
           </div></div></div>
 
-
+          <AnsiImageRender />
           <img width="33%" src={"/" + ansis[2]} />
           <img width="33%" src={"/" + ansis[3]} />
           <img width="33%" src={"/" + ansis[5]} />
