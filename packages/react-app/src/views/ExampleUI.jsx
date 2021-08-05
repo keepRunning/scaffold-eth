@@ -10,6 +10,30 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
+import { NFTStorage, File } from 'nft.storage';
+
+const nftStorageApiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQzYjgwMzQ4MzY1MWE4MDE5MjU5NzQ2MjY5ZjM1ZDI4NUMzMEJlQjkiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYyODE1NzYxNTc3NCwibmFtZSI6ImtleTEifQ.G9BNydhDBxYJqYr06xSW-hRbkj5AptqaijFokHPx3h0';
+const nftsClient = new NFTStorage({ token: nftStorageApiKey })
+
+async function nftsTestStoreString(s) {
+  const metadata = await nftsClient.store({
+    name: 'nft.storage store test',
+    description: 'Description: ' + s,
+    image: new File(['<DATA>'], 'notansi.jpg', { type: 'image/jpg' }),
+    //image: new Blob('XXX'),
+    properties: {
+      custom: 'Custom data can appear here, files are auto uploaded.',
+      //file: new File(['<DATA>'], 'README.md', { type: 'text/plain' }),
+      file: new File([new Blob(['this is a blob', 'by tomo'])], 'README.md', { type: 'text/plain' }),
+    }
+  })
+
+  console.log('IPFS URL for the metadata:', metadata.url)
+  console.log('metadata.json contents:\n', metadata.data)
+  console.log('metadata.json with IPFS gateway URLs:\n', metadata.embed())
+}
+
+
 // copied from ansi
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -218,6 +242,8 @@ export default function ExampleUI({
           <Button
             style={{ marginTop: 8 }}
             onClick={async () => {
+              await nftsTestStoreString(newPurpose);
+              if (false) {
               /* look how you call setPurpose on your contract: */
               /* notice how you pass a call back for tx updates too */
               const result = tx(writeContracts.YourContract.setPurpose(newPurpose), update => {
@@ -237,9 +263,10 @@ export default function ExampleUI({
               });
               console.log("awaiting metamask/web3 confirm result...", result);
               console.log(await result);
+              }
             }}
           >
-            Set Purpose!
+            Test nft.storage description [Set Purpose]!
           </Button>
         </div>
         <Divider />
