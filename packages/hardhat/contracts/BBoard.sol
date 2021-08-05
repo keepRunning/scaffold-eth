@@ -35,7 +35,7 @@ contract BBoard is ReentrancyGuard {
       return basefee;
   }
 
-  function buyBBlock(
+    function createBBlock(
 address nftContract,
 uint256 index,
   uint256 tokenId,
@@ -58,9 +58,36 @@ uint256 index,
     );
 
     //transfer ownership        
-    IERC721(nftContract).transferFrom(address(this), msg.sender ,tokenId);
+    IERC721(nftContract).transferFrom(msg.sender,address(this) ,tokenId);
 
   }
+
+//   function buyBBlock(
+// address nftContract,
+// uint256 index,
+//   uint256 tokenId,
+//   uint256 price 
+//   )public payable nonReentrant{
+//       require(price>0,"Price must be at least 1 wei");
+//       require(msg.value == getBasefee(),
+//       "Price must be equal to basefee");
+//     _bblockIds.increment();
+//     uint256 bblockId = _bblockIds.current();
+
+//     idToBblock[bblockId] = BBlock(
+//         payable(msg.sender),
+//         index,
+//         price,
+//         "",
+//         nftContract,
+//         tokenId,
+//         true
+//     );
+
+//     //transfer ownership        
+//     IERC721(nftContract).transferFrom(address(this), msg.sender ,tokenId);
+
+//   }
 
   function addContentToBBlock(){
 
