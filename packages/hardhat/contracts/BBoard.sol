@@ -80,21 +80,24 @@ contract BBoard is ReentrancyGuard {
         payable(owner).transfer(getBasefee());
     }
     
-    function sellBBlock(address nftContract, uint256 bblockId) public payable nonReentrant {
-      
-      uint256 price = idToBBlock[bblockId].price;
-      uint256 tokenId = idToBBlock[bblockId].tokenId;
-      require(msg.value == price);
+    function sellBBlock(address nftContract, uint256 bblockId)
+        public
+        payable
+        nonReentrant
+    {
+        uint256 price = idToBBlock[bblockId].price;
+        uint256 tokenId = idToBBlock[bblockId].tokenId;
+        require(msg.value == price);
 
-      //pay the seller
-      idToBBlock[bblockId].seller.transfer(msg.value);
-      //transfer ownership
-      IERC721(nftContract).transferFrom(address(this), msg.sender ,tokenId);
-      idToBBlock[bblockId].owner = payable(msg.sender);
-      idToBBlock[bblockId].sold = true;
-      _itemsSold.increment();
-      payable(owner).transfer(getBasefee());
-  }
+        //pay the seller
+        idToBBlock[bblockId].seller.transfer(msg.value);
+        //transfer ownership
+        IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+        idToBBlock[bblockId].owner = payable(msg.sender);
+        idToBBlock[bblockId].sold = true;
+        _itemsSold.increment();
+        payable(owner).transfer(getBasefee());
+    }
 
     function addContentToBBlock() public {}
 
