@@ -63,7 +63,71 @@ function AutoGrid() {
     'crop16-illusion-9.png', 
     'crop16-illusion-13.png', 
   ];
+  // https://raw.githubusercontent.com/PhMajerus/ANSI-art/master/Super%20Mario%20castle%20(wide)%20(256%20colors).ans
+  let ansiFileNames = ['256%20colors%20swatches%20(UTF-8).txt',
+    '256%20colors%20swatches.ans',
+    'Apple%20II%20(80x25).ans',
+    'Apple%20II.ans',
+    'Apple%20Macintosh.ans',
+    'Arecibo%20message.ans',
+    'Arkanoid.ans',
+    'Breakout.ans',
+    'CatChum%20(ASCII).txt',
+    'CatChum.ans',
+    'Commodore%2064%20(80x25).ans',
+    'Commodore%2064.ans',
+    'Frogger%20(small).ans',
+    'GW-Basic%20(UTF-8).txt',
+    'Gold%20medal.ans',
+    'IBM%20PC%20(80x25).ans',
+    'IBM%20PC%20startup%20screen%20(80x25).ans',
+    'IBM%20PC.ans',
+    'IBM%20PCjr%20startup%20screen%20(40x25).ans',
+    'IBM%20PCjr%20startup%20screen%20(80x25%20UTF-8%20double-width%20text).txt',
+    'IBM%20PCjr%20startup%20screen%20(80x25).ans',
+    'Lode%20Runner.ans',
+    'Lxss%20banner.ans',
+    'Lxss-VTArt-Blue.txt',
+    'Lxss-VTArt-Red.txt',
+    'MITS%20Altair%208800.ans',
+    'Mario%20Bros.%20(small).ans',
+    'Mario%20Bros.%20(wide).ans',
+    'MiniColorsWheel.ans',
+    'Monopoly%20board.ans',
+    'Morse%20Code.ans',
+    'Pac-Man%20(80x25).ans',
+    'Pac-Man%20(UTF-8).txt',
+    'Pac-Man.ans',
+    'Pitfall!.ans',
+    'QBasic%20(UTF-8).txt',
+    'Sega%20Snail%20Maze%20(UTF-8%20double-width%20text).txt',
+    'Sega%20Snail%20Maze%20(UTF-8).txt',
+    'Sega%20Snail%20Maze.ans',
+    'Shion%20in%20Monster%20World.ans',
+    'Sinclair%20ZX-Spectrum.ans',
+    'Sonic%20Green%20Hill%20Zone%20(256%20colors).ans',
+    'Sonic%20Green%20Hill%20Zone.ans',
+    'Super%20Mario%20castle%20(narrow).ans',
+    'Super%20Mario%20castle%20(wide)%20(256%20colors).ans',
+    'Super%20Mario%20castle%20(wide).ans',
+    'TestPattern%2024-bit.ans',
+    'TestPattern%20ANSI.ans',
+    'Tetris.ans',
+    'USA%20flag.ans',
+    'Visual%20Basic%20for%20DOS%20(UTF-8).txt',
+    'WSL%20logo%20(UTF-8).txt',
+    'Win10%20PowerToys.ans',
+    'Win10%20wallpaper.ans',
+    'Win10%20wallpaper.txt',
+    'Windows%201%20(UTF-8).txt',
+    'Windows%201.asc',
+    'Windows%2010.asc',
+    'Windows%20Terminal.ans'];
+  // let ansiUriArr = ansiFileNames.map(a => 'https://raw.githubusercontent.com/PhMajerus/ANSI-art/master/' + a);
+  let ansiUriArr = ansiFileNames.map(a => ({name: a, path: 'https://raw.githubusercontent.com/PhMajerus/ANSI-art/master/' + a}));
+
   // XXX PUBLIC_URL not set, hard code as root
+  // var obj = {counter: 1};
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -77,8 +141,7 @@ function AutoGrid() {
               <li className="breadcrumb-list-item current" style={classBreadcrumbListItem} >Portfolio 3 Columns</li>
             </ul>
           </div></div></div>
-
-          <AnsiImageRender />
+          
           <img width="33%" src={"/" + ansis[2]} />
           <img width="33%" src={"/" + ansis[3]} />
           <img width="33%" src={"/" + ansis[5]} />
@@ -134,6 +197,20 @@ function AutoGrid() {
             <ul><li>(66, 6)</li><li>0x9292813812313</li></ul>
           </Paper>
         </Grid>
+
+        {ansiUriArr.map(uri => (
+          <Grid item xs>
+            <pre width="100%" style={{ background: 'black' }}>
+              <AnsiImageRender tokenURI={uri.path} />
+            </pre>
+
+            <Paper className={classes.paper}>xs
+              <h3>{uri.name.replaceAll('%20', ' ')}</h3>
+            </Paper>
+
+          </Grid>
+        ))}
+        
       </Grid>
     </div>
   );
