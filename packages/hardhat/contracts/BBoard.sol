@@ -20,6 +20,7 @@ contract BBoard is ReentrancyGuard {
 
     struct BBlock {
         // bytes11 FATname; // 8.3 DOS filename
+        uint256 bblockId;
         address payable seller;
         address payable owner;
         uint256 price;
@@ -30,6 +31,16 @@ contract BBoard is ReentrancyGuard {
 
     //map where bblockId returns the BBlock
     mapping(uint256 => BBlock) private idToBBlock;
+
+    event BBlockCreated(
+        uint256 indexed bblockId,
+        address seller,
+        address owner,
+        uint256 price,
+        address indexed nft,
+        uint256 indexed tokenId,
+        bool sold
+    );
 
     function getBasefee() public view returns (uint256) {
         return basefee;
@@ -51,6 +62,7 @@ contract BBoard is ReentrancyGuard {
         owner.transfer(msg.value);
 
         idToBBlock[bblockId] = BBlock(
+            bblockId,
             payable(msg.sender),
             payable(address(0)),
             price,
@@ -61,6 +73,16 @@ contract BBoard is ReentrancyGuard {
 
         //transfer ownership
         IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+
+        emit BBlockCreated(
+            bblockId,
+            msg.sender,
+            address(0),
+            price,
+            nftContract,
+            tokenId,
+            false
+        );
     }
 
     function buyBBlock(address nftContract, uint256 bblockId)
@@ -102,7 +124,13 @@ contract BBoard is ReentrancyGuard {
     //     payable(owner).transfer(getBasefee());
     // }
 
-    function addContentToBBlock() public {}
+    function addContentToBBlock(uint256 tokenId, string memory tokenURI) public returns (bool) {
+       _setTokenURI(tokenId, tokenURI);
+       return true;
 
-    function removeContentfromBBlock() public {}
-}
+    }
+
+    function removeContentfromBBlock(uint256 tokenId) public returns (bool) {
+        _setTokenURI(tokenId, "0");
+        return true;
+    }
