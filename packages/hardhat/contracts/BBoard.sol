@@ -35,12 +35,15 @@ contract BBoard is ReentrancyGuard {
         return basefee;
     }
 
-    function createBBlock(address nftContract, uint256 tokenId)
-        public
-        payable
-        nonReentrant
-    {
+    //put the BBlock for sale
+    function createBBlockSale(
+        address nftContract,
+        uint256 tokenId,
+        uint256 price
+    ) public payable nonReentrant {
+        require(price > 0, "Price must be at least 1 wei");
         require(msg.value == getBasefee(), "Price must be equal to basefee");
+
         _bblockIds.increment();
         uint256 bblockId = _bblockIds.current();
 
@@ -48,16 +51,16 @@ contract BBoard is ReentrancyGuard {
         owner.transfer(msg.value);
 
         idToBBlock[bblockId] = BBlock(
-            payable(address(0)),
             payable(msg.sender),
-            0,
+            payable(address(0)),
+            price,
             nftContract,
             tokenId,
             false
         );
 
         //transfer ownership
-        IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+        IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
     }
 
     function buyBBlock(address nftContract, uint256 bblockId)
@@ -79,22 +82,25 @@ contract BBoard is ReentrancyGuard {
         idToBBlock[bblockId].sold = true;
         payable(owner).transfer(getBasefee());
     }
-    
-    function sellBBlock(address nftContract, uint256 bblockId) public payable nonReentrant {
-      
-      uint256 price = idToBBlock[bblockId].price;
-      uint256 tokenId = idToBBlock[bblockId].tokenId;
-      require(msg.value == price);
 
-      //pay the seller
-      idToBBlock[bblockId].seller.transfer(msg.value);
-      //transfer ownership
-      IERC721(nftContract).transferFrom(address(this), msg.sender ,tokenId);
-      idToBBlock[bblockId].owner = payable(msg.sender);
-      idToBBlock[bblockId].sold = true;
-      _itemsSold.increment();
-      payable(owner).transfer(getBasefee());
-  }
+    // function sellBBlock(address nftContract, uint256 bblockId)
+    //     public
+    //     payable
+    //     nonReentrant
+    // {
+    //     uint256 price = idToBBlock[bblockId].price;
+    //     uint256 tokenId = idToBBlock[bblockId].tokenId;
+    //     require(msg.value == price);
+
+    //     //pay the seller
+    //     idToBBlock[bblockId].seller.transfer(msg.value);
+    //     //transfer ownership
+    //     IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+    //     idToBBlock[bblockId].owner = payable(msg.sender);
+    //     idToBBlock[bblockId].sold = true;
+    //     _itemsSold.increment();
+    //     payable(owner).transfer(getBasefee());
+    // }
 
     function addContentToBBlock() public {}
 
