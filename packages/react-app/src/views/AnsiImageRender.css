@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'PerfectDosVga437';
+    src: local('PerfectDosVga437'), url(../fonts/Perfect_DOS_VGA_437.woff) format('woff');
+  }
+
+  @font-face {
+    font-family: 'TopazPlus_a500';
+    src: local('TopazPlus_a500'), url(../fonts/TopazPlus_a500_v1.0.woff) format('woff');
+  }
+
+  .topaz500 { font-family: 'TopazPlus_a500', monospace; }
+
+  .perfect-dos-vga-437 { font-family: 'PerfectDosVga437', monospace; }

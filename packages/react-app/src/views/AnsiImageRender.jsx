@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { default as AnsiUp } from 'ansi_up';
+import './AnsiImageRender.css';
 
 export default function AnsiImageRender({ tokenURI }) {
   const [html, setNewState] = useState('');
@@ -28,7 +29,7 @@ export default function AnsiImageRender({ tokenURI }) {
   }
 
   return (
-    <div dangerouslySetInnerHTML={{ __html: html }}>
+    <div dangerouslySetInnerHTML={{ __html: html }} className="perfect-dos-vga-437 topaz500">
 
     </div>
   );
