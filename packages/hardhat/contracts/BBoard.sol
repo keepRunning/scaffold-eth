@@ -124,13 +124,17 @@ contract BBoard is ReentrancyGuard {
     //     payable(owner).transfer(getBasefee());
     // }
 
-    function addContentToBBlock(uint256 tokenId, string memory tokenURI) public returns (bool) {
+    function addContentToBBlock(uint256 tokenId, string memory tokenURI) public {
+       
+       require(ERC721.ownerOf(tokenId) == msg.sender, "You don't own this NFT");
+       payable(owner).transfer(getBasefee());
        _setTokenURI(tokenId, tokenURI);
-       return true;
 
     }
 
-    function removeContentfromBBlock(uint256 tokenId) public returns (bool) {
+    function removeContentfromBBlock(uint256 tokenId) public {
+        require(ERC721.ownerOf(tokenId) == msg.sender, "You don't own this BBlock");
+        payable(owner).transfer(getBasefee());
         _setTokenURI(tokenId, "0");
-        return true;
+        
     }
