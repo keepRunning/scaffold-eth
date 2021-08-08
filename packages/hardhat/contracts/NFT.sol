@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: MIT OR Apache-2.0
 pragma solidity ^0.8.4;
 
@@ -13,9 +12,12 @@ contract NFT is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     //address of the bulletin board contract, used for interaction with the NFT
     address contractAddress;
+    uint256 basefee = 0.025 ether;
+    address payable owner;
 
     constructor(address bboardAddress) ERC721("BulletinBlock", "BBLK") {
         contractAddress = bboardAddress;
+        owner = payable(msg.sender);
     }
 
     function createToken(string memory tokenURI) public returns (uint256) {
@@ -27,5 +29,23 @@ contract NFT is ERC721URIStorage {
         setApprovalForAll(contractAddress, true);
         //needed for subsequent sale of the block/nft
         return newBBlockId;
+    }
+
+    function addContentToBBlock(uint256 tokenId, string memory tokenURI)
+        public
+    {
+        require(ownerOf(tokenId) == msg.sender, "You don't own this NFT");
+        payable(owner).transfer(getBasefee());
+        _setTokenURI(tokenId, tokenURI);
+    }
+
+    function removeContentfromBBlock(uint256 tokenId) public {
+        require(ownerOf(tokenId) == msg.sender, "You don't own this BBlock");
+        payable(owner).transfer(getBasefee());
+        _setTokenURI(tokenId, "0");
+    }
+
+    function getBasefee() public view returns (uint256) {
+        return basefee;
     }
 }

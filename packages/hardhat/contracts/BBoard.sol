@@ -5,6 +5,7 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
 contract BBoard is ReentrancyGuard {
     using Counters for Counters.Counter;
@@ -104,39 +105,5 @@ contract BBoard is ReentrancyGuard {
         idToBBlock[bblockId].owner = payable(msg.sender);
         idToBBlock[bblockId].sold = true;
         payable(owner).transfer(getBasefee());
-    }
-
-    // function sellBBlock(address nftContract, uint256 bblockId)
-    //     public
-    //     payable
-    //     nonReentrant
-    // {
-    //     uint256 price = idToBBlock[bblockId].price;
-    //     uint256 tokenId = idToBBlock[bblockId].tokenId;
-    //     require(msg.value == price);
-
-    //     //pay the seller
-    //     idToBBlock[bblockId].seller.transfer(msg.value);
-    //     //transfer ownership
-    //     IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
-    //     idToBBlock[bblockId].owner = payable(msg.sender);
-    //     idToBBlock[bblockId].sold = true;
-    //     _itemsSold.increment();
-    //     payable(owner).transfer(getBasefee());
-    // }
-
-    function addContentToBBlock(uint256 tokenId, string memory tokenURI) public {
-       
-       //require(ERC721.ownerOf(tokenId) == msg.sender, "You don't own this NFT");
-       payable(owner).transfer(getBasefee());
-       //_setTokenURI(tokenId, tokenURI);
-
-    }
-
-    function removeContentfromBBlock(uint256 tokenId) public {
-        //require(ERC721.ownerOf(tokenId) == msg.sender, "You don't own this BBlock");
-        payable(owner).transfer(getBasefee());
-        //_setTokenURI(tokenId, "0");
-        
     }
 }
