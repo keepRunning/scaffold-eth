@@ -13,10 +13,14 @@ export default function AnsiImageRender({ tokenURI }) {
       "headers": {
       }
     })
-      .then(response => response.text())
+      .then(response => response.arrayBuffer())
       .then(response => {
+
+        let decoder = new TextDecoder('ISO-8859-1');
+        let text = decoder.decode(response);
+
         const ansi_up = new AnsiUp();
-        let htmlResp = ansi_up.ansi_to_html(response);
+        let htmlResp = ansi_up.ansi_to_html(text);
         setNewState(htmlResp);
       })
       .catch(err => {
@@ -29,8 +33,8 @@ export default function AnsiImageRender({ tokenURI }) {
   }
 
   return (
-    <div dangerouslySetInnerHTML={{ __html: html }} className="perfect-dos-vga-437 topaz500">
+    <pre dangerouslySetInnerHTML={{ __html: html }} className="ansi-img">
 
-    </div>
+    </pre>
   );
 }

@@ -198,20 +198,30 @@ function AutoGrid() {
           </Paper>
         </Grid>
 
-        {ansiUriArr.map(uri => (
+        {/* {ansiUriArr.map(uri => (
           <Grid item xs>
-            <pre width="100%" style={{ background: 'black' }}>
               <AnsiImageRender tokenURI={uri.path} />
-            </pre>
-
             <Paper className={classes.paper}>xs
               <h3>{uri.name.replaceAll('%20', ' ')}</h3>
             </Paper>
 
           </Grid>
-        ))}
+        ))} */}
         
       </Grid>
+
+      
+      <Grid container spacing={3,0} >
+
+        {ansiUriArr.map(uri => (
+            <Grid item xs style={{backgroundColor:"black"}}>
+              <AnsiImageRender tokenURI={uri.path} />
+            </Grid>
+        ))}
+
+      </Grid>
+      
+      
     </div>
   );
 }

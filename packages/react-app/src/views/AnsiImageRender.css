@@ -11,3 +11,14 @@
   .topaz500 { font-family: 'TopazPlus_a500', monospace; }
 
   .perfect-dos-vga-437 { font-family: 'PerfectDosVga437', monospace; }
+
+  .ansi-img {
+    text-align: left;
+    background-color: black;
+    font-family: 'PerfectDosVga437', monospace;
+    font-size: 12px;
+    line-height: 12px;
+
+    width: 600px;
+    margin-bottom: 0;
+  }
