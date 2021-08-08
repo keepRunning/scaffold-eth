@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../@openzeppelin/contracts/utils/Counters.sol";
+//import "../@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
@@ -126,15 +127,16 @@ contract BBoard is ReentrancyGuard {
 
     function addContentToBBlock(uint256 tokenId, string memory tokenURI) public {
        
-       require(ERC721.ownerOf(tokenId) == msg.sender, "You don't own this NFT");
+       //require(ERC721.ownerOf(tokenId) == msg.sender, "You don't own this NFT");
        payable(owner).transfer(getBasefee());
-       _setTokenURI(tokenId, tokenURI);
+       //_setTokenURI(tokenId, tokenURI);
 
     }
 
     function removeContentfromBBlock(uint256 tokenId) public {
-        require(ERC721.ownerOf(tokenId) == msg.sender, "You don't own this BBlock");
+        //require(ERC721.ownerOf(tokenId) == msg.sender, "You don't own this BBlock");
         payable(owner).transfer(getBasefee());
-        _setTokenURI(tokenId, "0");
+        //_setTokenURI(tokenId, "0");
         
     }
+}

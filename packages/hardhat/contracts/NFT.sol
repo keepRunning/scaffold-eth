@@ -15,7 +15,7 @@ contract NFT is ERC721URIStorage {
     address contractAddress;
 
     constructor(address bboardAddress) ERC721("BulletinBlock", "BBLK") {
-        contractAddress = BBoardAddress;
+        contractAddress = bboardAddress;
     }
 
     function createToken(string memory tokenURI) public returns (uint256) {
