@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { default as AnsiUp } from 'ansi_up';
 import './AnsiImageRender.css';
 
-export default function AnsiImageRender({ tokenURI }) {
+export default function AnsiImageRender({ tokenURI, style }) {
   const [html, setNewState] = useState('');
 
   // tokenURI = 'https://raw.githubusercontent.com/PhMajerus/ANSI-art/master/Super%20Mario%20castle%20(wide)%20(256%20colors).ans'
@@ -33,7 +33,7 @@ export default function AnsiImageRender({ tokenURI }) {
   }
 
   return (
-    <pre dangerouslySetInnerHTML={{ __html: html }} className="ansi-img">
+    <pre dangerouslySetInnerHTML={{ __html: html }} style={style} className="ansi-img">
 
     </pre>
   );
