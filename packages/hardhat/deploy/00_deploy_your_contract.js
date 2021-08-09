@@ -12,6 +12,18 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
+  const bboard = await deploy("BBoard", {
+    from: deployer,
+    log: true,
+  });
+
+  await deploy("NFT", {
+    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+    from: deployer,
+    args: [bboard.address],
+    log: true,
+  });
+
   /*
     // Getting a previously deployed contract
     const YourContract = await ethers.getContract("YourContract", deployer);
