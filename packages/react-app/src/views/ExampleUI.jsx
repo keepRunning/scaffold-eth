@@ -47,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function RecentlySavedBlocks({limit}) {
+  const [newFilterAddress, setNewFilterAddress] = useState();
   const classes = useStyles();
   let ansiFileNames = [
     'tna1.ans',
@@ -74,6 +75,16 @@ function RecentlySavedBlocks({limit}) {
         </Grid>
         <div style={{border: '1px solid black'}}>
           <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Recently Saved Blocks ({limit})</h2>
+          <Input
+            onChange={e => {
+              setNewFilterAddress(e.target.value);
+            }}
+          />
+          <Button
+            style={{ marginTop: 8 }}
+            onClick={async () => { console.log('TODO filter by address') }}
+          >Show Blocks by Address
+          </Button>
           <Grid container spacing={3,0} >
 
             {ansiUriArr.map(uri => (
