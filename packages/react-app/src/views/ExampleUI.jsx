@@ -46,6 +46,54 @@ const useStyles = makeStyles((theme) => ({
         },
 }));
 
+function RecentlySavedBlocks({limit}) {
+  const classes = useStyles();
+  let ansiFileNames = [
+    'tna1.ans',
+    'tna2.ans',
+    'tna3.ans',
+    'tna4.ans',
+    /*
+    'Shion%20in%20Monster%20World.ans',
+    'TestPattern%20ANSI.ans',
+    'Tetris.ans',
+    */
+  ];
+  //let ansiUriArr = ansiFileNames.map(a => ({name: a, path: 'https://raw.githubusercontent.com/PhMajerus/ANSI-art/master/' + a}));
+  let ansiUriArr = ansiFileNames.map(a => ({name: a, path: '/' + a}));
+  return (
+    <div className={classes.root}>
+      <Grid container spacing={3}>
+                <Grid item xs style={{backgroundColor:"black"}}>
+        <AnsiImageRender style={{fontSize: 18, lineHeight: '18px', height: 650, width: 800, color: 'white' /* XXX bug because color should be white by ansi code */  }} tokenURI={'/info.ans'} />
+                </Grid>
+        <Grid item xs>
+          <div><span>Last known minted block at index 679.</span></div>
+          <div><span>Mint cost for next block: 0.00125 MATIC</span></div>
+          <button>MINT NEXT AVAILABLE BLOCK</button>
+        </Grid>
+        <div style={{border: '1px solid black'}}>
+          <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Recently Saved Blocks ({limit})</h2>
+          <Grid container spacing={3,0} >
+
+            {ansiUriArr.map(uri => (
+                <Grid item xs style={{backgroundColor:"black"}}>
+                  <Paper className={classes.paper}>
+                    <div className="ansi-wrapper" style={{maxWidth: 400}}>
+                      <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', height: 240, width: 320 }} tokenURI={uri.path} />
+                    </div>
+                    <h3>FILE: {uri.name}</h3>
+                    <ul><li>Row: 66</li><li>Col: 6</li><li>Owner: 0x92928...13812313</li></ul>
+                  </Paper>
+                </Grid>
+            ))}
+
+          </Grid>
+        </div>
+      </Grid>
+    </div>
+  )
+}
 function AutoGrid() {
   const classes = useStyles();
   const classBreadcrumbListItem = {
@@ -253,6 +301,8 @@ export default function ExampleUI({
       <div style={{ border: "1px solid #cccccc", padding: 16, /*width: 400,*/ margin: "auto", marginTop: 64 }}>
         <h2>Example UI:</h2>
         <h4>purpose: {purpose}</h4>
+        <Divider />
+        <RecentlySavedBlocks limit={3} />
         <Divider />
         <div style={{ margin: 8 }}>
           <div>I own {myBBlocksCount ? myBBlocksCount.toString() : 0} bBlocks</div>
