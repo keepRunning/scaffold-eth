@@ -20,11 +20,11 @@ contract NFT is ERC721URIStorage {
         owner = payable(msg.sender);
     }
 
-    function createToken(string memory tokenURI) public returns (uint256) {
+    function createToken() public returns (uint256) {
         _tokenIds.increment();
         uint256 newBBlockId = _tokenIds.current();
         _mint(msg.sender, newBBlockId);
-        _setTokenURI(newBBlockId, tokenURI);
+        // _setTokenURI(newBBlockId, tokenURI);
         //give bboard the right to transact
         setApprovalForAll(contractAddress, true);
         //needed for subsequent sale of the block/nft
