@@ -65,10 +65,19 @@ function RecentlySavedBlocks({limit}) {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-                <Grid item xs style={{backgroundColor:"black"}}>
-        <AnsiImageRender style={{fontSize: 18, lineHeight: '18px', height: 650, width: 800, color: 'white' /* XXX bug because color should be white by ansi code */  }} tokenURI={'/info.ans'} />
-                </Grid>
-        <Grid item xs>
+        <Grid item xs={8}>
+          <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', paddingBottom: 20, width: '100%', color: 'white' /* XXX bug because color should be white by ansi code */  }} tokenURI={'/ansi-bbs1.ans'} />
+        </Grid>
+        <Grid item xs={3}>
+          <button>Connect Metamask</button>
+          <div><span>Connected address: 0x1234...5678</span></div>
+        </Grid>
+      </Grid>
+      <Grid container spacing={3}>
+        <Grid item xs={8} style={{backgroundColor:"black"}}>
+          <AnsiImageRender style={{fontSize: 18, lineHeight: '18px', paddingLeft: 30, height: 650, width: 800, color: 'white' /* XXX bug because color should be white by ansi code */  }} tokenURI={'/info.ans'} />
+        </Grid>
+        <Grid item xs={3}>
           <div><span>Last known minted block at index 679.</span></div>
           <div><span>Mint cost for next block: 0.00125 MATIC</span></div>
           <button>MINT NEXT AVAILABLE BLOCK</button>
@@ -83,12 +92,28 @@ function RecentlySavedBlocks({limit}) {
           <Button
             style={{ marginTop: 8 }}
             onClick={async () => { console.log('TODO filter by address') }}
-          >Show Blocks by Address
+          >Filter Blocks by Address
+          </Button>
+          <Button
+            style={{ marginTop: 8 }}
+            onClick={async () => { console.log('TODO filter by address') }}
+          >Filter Blocks by My Address
           </Button>
           <Grid container spacing={3,0} >
 
-            {ansiUriArr.map(uri => (
-                <Grid item xs style={{backgroundColor:"black"}}>
+            {'tna1.ans|tna2.ans|tnb1.ans|tnb2.ans'.split('|').map((uri, i) => (
+                    <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
+                      <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
+                    </div>
+            ))}
+          </Grid><Grid container spacing={3,0} >
+            {'tna3.ans|tna4.ans|tnb3.ans|tnb4.ans'.split('|').map((uri, i) => (
+                    <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
+                      <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
+                    </div>
+            ))}
+            {ansiUriArr.map((uri, i) => (
+                <Grid key={"ansi2-" + i} item xs style={{backgroundColor:"black"}}>
                   <Paper className={classes.paper}>
                     <div className="ansi-wrapper" style={{maxWidth: 400}}>
                       <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', height: 240, width: 320 }} tokenURI={uri.path} />
@@ -272,8 +297,8 @@ function AutoGrid() {
       
       <Grid container spacing={3,0} >
 
-        {ansiUriArr.map(uri => (
-            <Grid item xs style={{backgroundColor:"black"}}>
+        {ansiUriArr.map((uri, i) => (
+            <Grid key={"autogrid-ansi-" + i} item xs style={{backgroundColor:"black"}}>
               <AnsiImageRender tokenURI={uri.path} />
             </Grid>
         ))}
@@ -310,8 +335,8 @@ export default function ExampleUI({
         ⚙️ Here is an example UI that displays and sets the purpose in your smart contract:
       */}
       <div style={{ border: "1px solid #cccccc", padding: 16, /*width: 400,*/ margin: "auto", marginTop: 64 }}>
-        <h2>Example UI:</h2>
-        <h4>purpose: {purpose}</h4>
+        <h2>Bulletin Block System Permissionless Distributed UI:</h2>
+        {/* <h4>purpose: {purpose}</h4> */}
         <Divider />
         <RecentlySavedBlocks limit={3} />
         <Divider />
