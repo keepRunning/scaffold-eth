@@ -16,9 +16,11 @@ contract NFT is ERC721URIStorage, ReentrancyGuard {
     address bboardAddress;
     uint256 basefee = 0.025 ether;
     address payable owner;
+    BBoard instanceBBoard;
 
     constructor(address _bboardAddress) ERC721("BulletinBlock", "BBLK") {
         bboardAddress = _bboardAddress;
+        instanceBBoard = BBoard(bboardAddress);
         owner = payable(msg.sender);
     }
 
@@ -35,11 +37,7 @@ contract NFT is ERC721URIStorage, ReentrancyGuard {
         return newBBlockId;
     }
 
-    function buyNewBBlock_1(address nftContract, uint256 tokenId)
-        private
-        nonReentrant
-    {
-        BBoard instanceBBoard = BBoard(bboardAddress);
+    function buyNewBBlock_1(address nftContract, uint256 tokenId) private {
         return instanceBBoard.buyNewBBlock(nftContract, tokenId);
     }
 
