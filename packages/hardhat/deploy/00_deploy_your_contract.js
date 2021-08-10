@@ -27,9 +27,9 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const NFT = await ethers.getContract("NFT", deployer);
   const BBoard = await ethers.getContract("BBoard", deployer);
 
-  for(let count = 0; count<=20;count++){
-    console.log(count + "/20 BBlocks minted");
+  for(let count = 1; count<=20;count++){
     await NFT.createToken();
+    console.log(count + "/20 BBlocks minted");
   }
 
   console.log("20 BBlocks minted for deployer " + deployer)
