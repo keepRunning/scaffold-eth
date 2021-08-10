@@ -28,7 +28,6 @@ contract NFT is ERC721URIStorage, ReentrancyGuard {
         _tokenIds.increment();
         uint256 newBBlockId = _tokenIds.current();
         _mint(msg.sender, newBBlockId);
-        // _setTokenURI(newBBlockId, tokenURI);
         //give bboard the right to transact
         setApprovalForAll(bboardAddress, true);
         //pay basefee, save new bblock
@@ -37,6 +36,7 @@ contract NFT is ERC721URIStorage, ReentrancyGuard {
         return newBBlockId;
     }
 
+    //calls bboard's buyNewBBlock function
     function buyNewBBlock_1(address nftContract, uint256 tokenId) private {
         return instanceBBoard.buyNewBBlock(nftContract, tokenId);
     }
