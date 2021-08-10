@@ -5,12 +5,12 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
-  await deploy("YourContract", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-    // args: [ "Hello", utils.parseEther("1.5") ],
-    log: true,
-  });
+  // await deploy("YourContract", {
+  //   // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+  //   from: deployer,
+  //   // args: [ "Hello", utils.parseEther("1.5") ],
+  //   log: true,
+  // });
 
   const bboard = await deploy("BBoard", {
     from: deployer,
@@ -26,16 +26,21 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   const NFT = await ethers.getContract("NFT", deployer);
   const BBoard = await ethers.getContract("BBoard", deployer);
+  let baseFee = await NFT.getBasefee();
+  baseFee = baseFee.toString();
 
-  for(let count = 1; count<=20;count++){
-    await NFT.createToken();
-    console.log(count + "/20 BBlocks minted");
-  }
+  console.log(baseFee);
 
-  console.log("20 BBlocks minted for deployer " + deployer)
+  // for(let count = 1; count<=20;count++){
+  //   await NFT.createToken({value:});
+  //   console.log(count + "/20 BBlocks minted");
+  // }
 
-  const idsCounter = await NFT.getTokenIds()
-  console.log("tokenIds counter: "+ idsCounter[0].toNumber())
+
+  // console.log("20 BBlocks minted for deployer " + deployer)
+
+  // const idsCounter = await NFT.getTokenIds()
+  // console.log("tokenIds counter: "+ idsCounter[0].toNumber())
 
 
   /*
@@ -70,4 +75,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   });
   */
 };
-module.exports.tags = ["YourContract"];
+module.exports.tags = ["YourContract","NFT","BBoard"];
