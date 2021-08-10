@@ -31,10 +31,14 @@ contract NFT is ERC721URIStorage {
         return newBBlockId;
     }
 
+    function getTokenIds() public view returns(Counters.Counter memory){
+        return _tokenIds;
+    }
+
     function addContentToBBlock(uint256 tokenId, string memory tokenURI)
         public
     {
-        require(ownerOf(tokenId) == msg.sender, "You don't own this NFT");
+        require(ownerOf(tokenId) == msg.sender, "You don't own this BBlock");
         payable(owner).transfer(getBasefee());
         _setTokenURI(tokenId, tokenURI);
     }

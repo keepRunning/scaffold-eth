@@ -106,7 +106,7 @@ contract BBoard is ReentrancyGuard {
         idToBBlock[bblockId].sold = true;
         payable(owner).transfer(getBasefee());
     }
-    
+
     function fetchMyNFTs() public view returns (BBlock[] memory) {
         uint256 totalItemCount = _bblockIds.current();
         uint256 itemCount = 0;

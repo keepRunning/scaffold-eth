@@ -24,6 +24,20 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
+  const NFT = await ethers.getContract("NFT", deployer);
+  const BBoard = await ethers.getContract("BBoard", deployer);
+
+  for(let count = 0; count<=20;count++){
+    console.log(count + "/20 BBlocks minted");
+    await NFT.createToken();
+  }
+
+  console.log("20 BBlocks minted for deployer " + deployer)
+
+  const idsCounter = await NFT.getTokenIds()
+  console.log("tokenIds counter: "+ idsCounter[0].toNumber())
+
+
   /*
     // Getting a previously deployed contract
     const YourContract = await ethers.getContract("YourContract", deployer);
