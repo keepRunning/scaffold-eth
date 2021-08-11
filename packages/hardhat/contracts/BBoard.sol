@@ -4,19 +4,22 @@ pragma solidity ^0.8.4;
 //import "../@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "hardhat/console.sol";
 
-contract BBoard is ReentrancyGuard {
+contract BBoard is ERC721, ERC721URIStorage, ERC721Enumerable, Pausable {
     using Counters for Counters.Counter;
     //id for each created bblock
     Counters.Counter private _bblockIds;
 
     address payable owner;
     //this is a fee in deployed network (matic) currency
-    uint256 basefee = 0.025 ether;
+    uint256 basefee = 500;
 
-    constructor() {
+    constructor() ERC721("BulletinBlock", "BBLK") {
         owner = payable(msg.sender);
     }
 
@@ -26,8 +29,6 @@ contract BBoard is ReentrancyGuard {
         address payable seller;
         address payable owner;
         uint256 price;
-        address nft;
-        uint256 tokenId;
         bool sold;
     }
 
@@ -39,56 +40,62 @@ contract BBoard is ReentrancyGuard {
         address seller,
         address owner,
         uint256 price,
-        address indexed nft,
-        uint256 indexed tokenId,
         bool sold
     );
 
     function getBasefee() public view returns (uint256) {
         return basefee;
     }
-    
+
+    function createToken() public payable returns (uint256) {
+        require(msg.value == getBasefee(), "Price must be equal to basefee");
+        owner.transfer(getBasefee());
+        _bblockIds.increment();
+        uint256 newBBlockId = _bblockIds.current();
+        _mint(msg.sender, newBBlockId);
+        //save new bblock
+        createNewBBlock(newBBlockId);
+        //needed for subsequent sale of the block/nft
+        return newBBlockId;
+    }
+
+    function addContentToBBlock(uint256 bblockId, string memory URI) public {
+        require(
+            msg.sender == ERC721.ownerOf(bblockId),
+            "You don't own this NFT"
+        );
+        _setTokenURI(bblockId, URI);
+    }
 
     //put the BBlock for sale
-    function createBBlockSale(
-        address nftContract,
-        uint256 bblockId,
-        uint256 price
-    ) public payable nonReentrant {
+    function createBBlockSale(uint256 bblockId, uint256 price) public payable {
         require(price > 0, "Price must be at least 1 wei");
         require(msg.value == getBasefee(), "Price must be equal to basefee");
 
         //pay the fee
         owner.transfer(msg.value);
 
-        uint256 tokenId = idToBBlock[bblockId].tokenId;
-
         //transfer ownership
-        IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+        transferFrom(msg.sender, address(this), bblockId);
 
         idToBBlock[bblockId].owner = payable(address(this));
         idToBBlock[bblockId].seller = payable(msg.sender);
         idToBBlock[bblockId].price = price;
         idToBBlock[bblockId].sold = false;
+        _setTokenURI(bblockId, "");
 
         emit BBlockCreated(
             bblockId,
             msg.sender,
             address(this),
             price,
-            nftContract,
-            tokenId,
             false
         );
     }
 
-    function buyBBlock(address nftContract, uint256 bblockId)
-        public
-        payable
-        nonReentrant
-    {
+    function buyBBlock(uint256 bblockId) public payable {
         uint256 price = idToBBlock[bblockId].price;
-        uint256 tokenId = idToBBlock[bblockId].tokenId;
+        uint256 tokenId = idToBBlock[bblockId].bblockId;
 
         require(msg.value == price);
 
@@ -96,7 +103,7 @@ contract BBoard is ReentrancyGuard {
         idToBBlock[bblockId].seller.transfer(msg.value);
 
         //transfer ownership
-        IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+        transferFrom(address(this), msg.sender, tokenId);
 
         payable(owner).transfer(getBasefee());
 
@@ -105,41 +112,21 @@ contract BBoard is ReentrancyGuard {
         idToBBlock[bblockId].sold = true;
     }
 
-    function buyNewBBlock(address nftContract, uint256 tokenId)
-        public
-        nonReentrant
-    {
-        // require(msg.value == getBasefee(), "Price must be equal to basefee");
-
-        //pay fee
-        // owner.transfer(getBasefee());
-
-        //transfer ownership
-        IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
-
-                // require(0==1,"haha nope");
-
-        _bblockIds.increment();
-        uint256 bblockId = _bblockIds.current();
-
+    function createNewBBlock(uint256 bblockId) private {
         //create new bblock
         idToBBlock[bblockId] = BBlock(
             bblockId,
             payable(address(0)),
             payable(msg.sender),
             0,
-            nftContract,
-            tokenId,
             false
         );
 
-          emit BBlockCreated(
+        emit BBlockCreated(
             bblockId,
             payable(address(0)),
             payable(msg.sender),
             0,
-            nftContract,
-            tokenId,
             false
         );
     }
@@ -149,6 +136,10 @@ contract BBoard is ReentrancyGuard {
         view
         returns (BBlock[] memory)
     {}
+
+    function getBBlockIdCounter() public view returns (uint256) {
+        return _bblockIds.current();
+    }
 
     function fetchMyNFTs() public view returns (BBlock[] memory) {
         uint256 totalItemCount = _bblockIds.current();
@@ -171,5 +162,38 @@ contract BBoard is ReentrancyGuard {
             }
         }
         return items;
+    }
+
+    function _burn(uint256 tokenId)
+        internal
+        override(ERC721, ERC721URIStorage)
+    {
+        super._burn(tokenId);
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return super.tokenURI(tokenId);
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Enumerable) whenNotPaused {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }

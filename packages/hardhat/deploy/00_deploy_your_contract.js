@@ -17,12 +17,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 
-  await deploy("NFT", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    from: deployer,
-    args: [bboard.address],
-    log: true,
-  });
+  // await deploy("NFT", {
+  //   // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+  //   from: deployer,
+  //   args: [bboard.address],
+  //   log: true,
+  // });
 
   // const NFT = await ethers.getContract("NFT", deployer);
   // const BBoard = await ethers.getContract("BBoard", deployer);
