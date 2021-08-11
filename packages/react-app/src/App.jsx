@@ -21,7 +21,7 @@ import {
   useUserSigner,
 } from "./hooks";
 // import Hints from "./Hints";
-import { ExampleUI, Hints, Subgraph } from "./views";
+import { ExampleUI, About, MyBlocks, Hints, Subgraph } from "./views";
 
 const { ethers } = require("ethers");
 /*
@@ -410,6 +410,26 @@ function App(props) {
               Hints
             </Link>
           </Menu.Item>
+          <Menu.Item key="/about">
+            <Link
+              onClick={() => {
+                setRoute("/about");
+              }}
+              to="/about"
+            >
+              About BBS
+            </Link>
+          </Menu.Item>
+          <Menu.Item key="/blocks">
+            <Link
+              onClick={() => {
+                setRoute("/blocks");
+              }}
+              to="/blocks"
+            >
+              My Blocks
+            </Link>
+          </Menu.Item>
           <Menu.Item key="/exampleui">
             <Link
               onClick={() => {
@@ -418,26 +438,6 @@ function App(props) {
               to="/exampleui"
             >
               ExampleUI
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/mainnetdai">
-            <Link
-              onClick={() => {
-                setRoute("/mainnetdai");
-              }}
-              to="/mainnetdai"
-            >
-              Mainnet DAI
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="/subgraph">
-            <Link
-              onClick={() => {
-                setRoute("/subgraph");
-              }}
-              to="/subgraph"
-            >
-              Subgraph
             </Link>
           </Menu.Item>
         </Menu>
@@ -482,6 +482,42 @@ function App(props) {
           </Route>
           <Route path="/exampleui">
             <ExampleUI
+              address={address}
+              userSigner={userSigner}
+              mainnetProvider={mainnetProvider}
+              localProvider={localProvider}
+              yourLocalBalance={yourLocalBalance}
+              price={price}
+              tx={tx}
+              writeContracts={writeContracts}
+              readContracts={readContracts}
+              purpose={purpose}
+              setPurposeEvents={setPurposeEvents}
+              myBBlocksCount={myBBlocksCount}
+              my1stBBlockTokenId={my1stBBlockTokenId}
+              my1stBBlockTokenURI={my1stBBlockTokenURI}
+            />
+          </Route>
+          <Route path="/about">
+            <About
+              address={address}
+              userSigner={userSigner}
+              mainnetProvider={mainnetProvider}
+              localProvider={localProvider}
+              yourLocalBalance={yourLocalBalance}
+              price={price}
+              tx={tx}
+              writeContracts={writeContracts}
+              readContracts={readContracts}
+              purpose={purpose}
+              setPurposeEvents={setPurposeEvents}
+              myBBlocksCount={myBBlocksCount}
+              my1stBBlockTokenId={my1stBBlockTokenId}
+              my1stBBlockTokenURI={my1stBBlockTokenURI}
+            />
+          </Route>
+          <Route path="/blocks">
+            <MyBlocks
               address={address}
               userSigner={userSigner}
               mainnetProvider={mainnetProvider}
