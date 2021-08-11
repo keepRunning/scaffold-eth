@@ -4,6 +4,7 @@ import { Button, Card, DatePicker, Divider, Input, List, Progress, Slider, Spin,
 import React, { useState } from "react";
 import { Address, Balance } from "../components";
 import AnsiImageRender from "./AnsiImageRender"
+import { StoreFileOnIPFS } from "../helpers";
 
 //import Button from "@material-ui/core/Button";
 import { makeStyles } from '@material-ui/core/styles';
@@ -61,6 +62,7 @@ function MakeBlockModal() {
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
+  const [selectedFileState, setSelectedFileState ] = React.useState({});
 
   const handleOpen = () => {
     setOpen(true);
@@ -69,6 +71,27 @@ function MakeBlockModal() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  var file;
+  var fileObjectUrl;
+  const processFile = (f) => {
+    console.log('file selected', f);
+    file = f;
+    const reader = new FileReader();
+    fileObjectUrl = window.URL.createObjectURL(f);
+    let userMessage = 'File selected'
+    setSelectedFileState({file, fileObjectUrl, userMessage});
+  }
+
+  const uploadFileAndProceed = async () => {
+    let userMessage = 'File is being uploaded to IPFS...';
+    setSelectedFileState({...selectedFileState, userMessage})
+    let metadata = await StoreFileOnIPFS('name', 'description', undefined, selectedFileState.file);
+    userMessage = 'File upload complete. Proceed to submit transaction.'
+    setSelectedFileState({...selectedFileState, metadata, userMessage});
+  }
+
+  
 
   const body = (
     <div style={modalStyle} className={classes.paper}>
@@ -91,11 +114,14 @@ function MakeBlockModal() {
         <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={"tna1.ans"} />
       </p><p>
         Choose .ans file to save into your chosen block:
-        <input type="file" id="input" onChange={(evt) => console.log("event: ", evt, "selected file: ", evt.target.files[0])} />
+        <input type="file" id="input" onChange={(evt) => processFile(evt.target.files[0]) } />
       </p><p>
-        A preview of your ANSi will appear here
+        { fileObjectUrl }
+        { selectedFileState.fileObjectUrl && 
+        <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270, height: 270, overflow: 'scroll' }} tokenURI={selectedFileState.fileObjectUrl} /> }
       </p><p>
-        TODO: <button>TEST FILE UPLOAD</button>
+      { selectedFileState.file && <button onClick={() => uploadFileAndProceed()}>Proceed</button> }
+        <p>{selectedFileState.userMessage}</p>
       </p>
     </div>
   );

@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { default as AnsiUp } from 'ansi_up';
 import './AnsiImageRender.css';
 
 export default function AnsiImageRender({ tokenURI, style }) {
   const [html, setNewState] = useState('');
 
-  // tokenURI = 'https://raw.githubusercontent.com/PhMajerus/ANSI-art/master/Super%20Mario%20castle%20(wide)%20(256%20colors).ans'
+  useEffect(() => {
+    fetchHtml(tokenURI);
+  }, [tokenURI]);
 
   const fetchHtml = (url) => {
     fetch(url, {
