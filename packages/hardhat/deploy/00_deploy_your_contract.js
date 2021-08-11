@@ -32,14 +32,14 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   // console.log(baseFee);
 
   // for(let count = 1; count<=20;count++){
-  //   await NFT.createToken({value:baseFee});
+  //   await NFT.createBBlock({value:baseFee});
   //   console.log(count + "/20 BBlocks minted");
   // }
 
 
   // console.log("20 BBlocks minted for deployer " + deployer)
 
-  // const idsCounter = await NFT.getTokenIds()
+  // const idsCounter = await NFT.getTokenIdCounter()
   // console.log("tokenIds counter: "+ idsCounter[0].toNumber())
 
 

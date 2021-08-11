@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 
-
 contract BBoard is ReentrancyGuard {
     using Counters for Counters.Counter;
     //id for each created bblock
@@ -48,6 +47,7 @@ contract BBoard is ReentrancyGuard {
     function getBasefee() public view returns (uint256) {
         return basefee;
     }
+    
 
     //put the BBlock for sale
     function createBBlockSale(
@@ -56,7 +56,7 @@ contract BBoard is ReentrancyGuard {
         uint256 price
     ) public payable nonReentrant {
         require(price > 0, "Price must be at least 1 wei");
-        require(msg.value >= getBasefee(), "Price must be equal to basefee");
+        require(msg.value == getBasefee(), "Price must be equal to basefee");
 
         //pay the fee
         owner.transfer(msg.value);
@@ -100,28 +100,40 @@ contract BBoard is ReentrancyGuard {
 
         payable(owner).transfer(getBasefee());
 
+        idToBBlock[bblockId].seller = payable(address(0));
         idToBBlock[bblockId].owner = payable(msg.sender);
         idToBBlock[bblockId].sold = true;
     }
 
     function buyNewBBlock(address nftContract, uint256 tokenId)
         public
-        payable
         nonReentrant
     {
-        require(msg.value >= getBasefee(), "Price must be equal to basefee");
+        // require(msg.value == getBasefee(), "Price must be equal to basefee");
 
         //pay fee
-        owner.transfer(getBasefee());
+        // owner.transfer(getBasefee());
 
         //transfer ownership
         IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+
+                // require(0==1,"haha nope");
 
         _bblockIds.increment();
         uint256 bblockId = _bblockIds.current();
 
         //create new bblock
         idToBBlock[bblockId] = BBlock(
+            bblockId,
+            payable(address(0)),
+            payable(msg.sender),
+            0,
+            nftContract,
+            tokenId,
+            false
+        );
+
+          emit BBlockCreated(
             bblockId,
             payable(address(0)),
             payable(msg.sender),

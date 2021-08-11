@@ -14,7 +14,7 @@ contract NFT is ERC721URIStorage, ReentrancyGuard {
     Counters.Counter private _tokenIds;
     //address of the bulletin board contract, used for interaction with the NFT
     address bboardAddress;
-    uint256 basefee = 0.025 ether;
+    uint basefee = 1000;
     address payable owner;
     BBoard instanceBBoard;
 
@@ -25,9 +25,11 @@ contract NFT is ERC721URIStorage, ReentrancyGuard {
     }
 
     function createToken() public payable returns (uint256) {
+        require(msg.value == getBasefee(),"Price must be equal to basefee");
+        owner.transfer(getBasefee());
         _tokenIds.increment();
         uint256 newBBlockId = _tokenIds.current();
-        _mint(msg.sender, newBBlockId);
+        _mint(bboardAddress, newBBlockId);
         //give bboard the right to transact
         setApprovalForAll(bboardAddress, true);
         //pay basefee, save new bblock
@@ -37,25 +39,25 @@ contract NFT is ERC721URIStorage, ReentrancyGuard {
     }
 
     //calls bboard's buyNewBBlock function
-    function buyNewBBlock_1(address nftContract, uint256 tokenId) private {
-        return instanceBBoard.buyNewBBlock(nftContract, tokenId);
+    function buyNewBBlock_1(address nftContract, uint256 tokenId) internal {
+        instanceBBoard.buyNewBBlock(nftContract, tokenId);
     }
 
-    function getTokenIds() public view returns (Counters.Counter memory) {
-        return _tokenIds;
+    function getTokenIdCounter() public view returns (uint) {
+        return _tokenIds.current();
     }
 
     function addContentToBBlock(uint256 tokenId, string memory tokenURI)
         public
     {
         require(ownerOf(tokenId) == msg.sender, "You don't own this BBlock");
-        payable(owner).transfer(getBasefee());
+        owner.transfer(getBasefee());
         _setTokenURI(tokenId, tokenURI);
     }
 
     function removeContentfromBBlock(uint256 tokenId) public {
         require(ownerOf(tokenId) == msg.sender, "You don't own this BBlock");
-        payable(owner).transfer(getBasefee());
+        owner.transfer(getBasefee());
         _setTokenURI(tokenId, "0");
     }
 
