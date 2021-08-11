@@ -75,7 +75,7 @@ export default function Account({
           /* type={minimized ? "default" : "primary"}     too many people just defaulting to MM and having a bad time */
           onClick={loadWeb3Modal}
         >
-          connect
+          <img src="/connect-metamask-color.png" style={{width: 100}} />
         </Button>,
       );
     }

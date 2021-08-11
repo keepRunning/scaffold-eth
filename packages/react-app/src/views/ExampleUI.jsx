@@ -55,7 +55,7 @@ const useModalStyles = makeStyles((theme) => ({
     padding: theme.spacing(2, 4, 3),
   },
 }));
-function SimpleModal() {
+function MakeBlockModal() {
 
   const classes = useModalStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
@@ -72,18 +72,38 @@ function SimpleModal() {
 
   const body = (
     <div style={modalStyle} className={classes.paper}>
-      <h2 id="simple-modal-title">Text in a modal</h2>
+      <h2 id="simple-modal-title">Mint New Block!</h2>
       <p id="simple-modal-description">
-        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+
+        You will get the next available block. 
+      </p><p>
+        Current expected position:
+
+      </p><p>
+        Col: 0,
+      </p><p>
+        Row: 0
       </p>
-      <SimpleModal />
+      <button>MINT NEXT AVAILABLE BLOCK</button>
+      <p>
+        Current contents:
+        
+        <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={"tna1.ans"} />
+      </p><p>
+        Choose .ans file to save into your chosen block:
+        <input type="file" id="input" onChange={(evt) => console.log("event: ", evt, "selected file: ", evt.target.files[0])} />
+      </p><p>
+        A preview of your ANSi will appear here
+      </p><p>
+        TODO: <button>TEST FILE UPLOAD</button>
+      </p>
     </div>
   );
 
   return (
     <div>
       <button type="button" onClick={handleOpen}>
-        Open Modal
+        Manage Blocks / Mint &amp; Write / CLICK ME TO OPEN DIALOG
       </button>
       <Modal
         open={open}
@@ -132,6 +152,7 @@ function RecentlySavedBlocks({limit}) {
           <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', paddingBottom: 20, width: '100%', color: 'white' /* XXX bug because color should be white by ansi code */  }} tokenURI={'/ansi-bbs1.ans'} />
         </Grid>
         <Grid item xs={3}>
+          <AnsiImageRender style={{fontSize: 8, lineHeight: '8px', color: 'white' }} tokenURI={'/connect-metamask.ans'} />
           <button>Connect Metamask</button>
           <div><span>Connected address: 0x1234...5678</span></div>
         </Grid>
@@ -143,8 +164,7 @@ function RecentlySavedBlocks({limit}) {
         <Grid item xs={3}>
           <div><span>Last known minted block at index 679.</span></div>
           <div><span>Mint cost for next block: 0.00125 MATIC</span></div>
-          <button>MINT NEXT AVAILABLE BLOCK</button>
-          <SimpleModal />
+          <MakeBlockModal />
         </Grid>
         <div style={{border: '1px solid black'}}>
           <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Recently Saved Blocks ({limit})</h2>
