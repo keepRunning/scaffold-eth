@@ -175,11 +175,6 @@ function RecentlySavedBlocks({limit}) {
             onClick={async () => { console.log('TODO filter by address') }}
           >Filter Blocks by Address
           </Button>
-          <Button
-            style={{ marginTop: 8 }}
-            onClick={async () => { console.log('TODO filter by address') }}
-          >Filter Blocks by My Address
-          </Button>
           <div className="ansi-grid-wrapper">
           <Grid container spacing={3,0} >
 
@@ -233,7 +228,6 @@ function MyBlockCard({ readContracts, index, ownerAddress } ) {
   const tokenUri = useContractReader(readContracts, "BBoard", "tokenURI", [tokenId]);
   //function BlockCard({ uriPath, index, name, ownerAddress } ) {
   return (
-      <Grid container spacing={3,0} >
         <Grid item xs >
           <Paper className={"classes.paper"}>
             <div className="ansi-wrapper" style={{maxWidth: 400}}>
@@ -243,8 +237,6 @@ function MyBlockCard({ readContracts, index, ownerAddress } ) {
             <ul><li>Row: {Math.floor(index / 4)}</li><li>Col: {index % 4}</li><li>Owner: {ownerAddress}</li></ul>
           </Paper>
         </Grid>
-
-      </Grid>
   )
 }
 
@@ -277,22 +269,22 @@ export default function MyBlocks({
         {/* <h4>purpose: {purpose}</h4> */}
         <Grid container spacing={3}>
           <div>
-            <div>You own {myBBlocksCount ? myBBlocksCount.toString() : 0} bBlocks</div>
+            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Your Blocks ({myBBlocksCount ? myBBlocksCount.toString() : 0})</h2>
             <div>
               <div>
+              <Grid container spacing={3,0} >
               {
                 [...Array(myBBlocksCount ? myBBlocksCount.toNumber() : 0).keys()].map(i =>
                   (<MyBlockCard readContracts={readContracts} index={i} ownerAddress={address} />)
                 )
               }
-              </div>
-              <h3>Here's your 1st (if &gt; 0) tokenId</h3>
-              <div>{ my1stBBlockTokenId ? my1stBBlockTokenId.toString() : 'nada' }</div>
+              </Grid></div>
+              <div>{ /* my1stBBlockTokenId ? my1stBBlockTokenId.toString() : 'nada' */ }</div>
               <div>{ my1stBBlockTokenURI ? my1stBBlockTokenURI : 'nada' }</div>
 
 
             </div>
-            <p>Mint/Buy a Block!</p>
+            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Mint/Buy a Block</h2>
             <p>Mint fee: {blockMintFee ? blockMintFee.toString() : '...loading' }</p>
             <Button
               style={{ marginTop: 8 }}
