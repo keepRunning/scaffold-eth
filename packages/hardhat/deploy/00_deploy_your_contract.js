@@ -31,13 +31,13 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   console.log(baseFee);
 
-  for(let count = 1; count<=20;count++){
+  for(let count = 1; count<=100;count++){
     await BBoard.createToken({value:baseFee});
-    console.log(count + "/20 BBlocks minted");
+    console.log(count + "/100 BBlocks minted");
   }
 
 
-  console.log("20 BBlocks minted for deployer " + deployer)
+  console.log("100 BBlocks minted for deployer " + deployer)
 
   const idsCounter = await BBoard.getBBlockIdCounter()
   console.log("tokenIds counter: "+ idsCounter)
