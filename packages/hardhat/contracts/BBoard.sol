@@ -182,11 +182,7 @@ contract BBoard is ERC721, ERC721URIStorage {
         return items;
     }
 
-     function fetchBBlocksForSale()
-        public
-        view
-        returns (BBlock[] memory)
-    {
+    function fetchBBlocksForSale() public view returns (BBlock[] memory) {
         uint256 totalItemCount = _bblockIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
@@ -213,24 +209,24 @@ contract BBoard is ERC721, ERC721URIStorage {
         return _bblockIds.current();
     }
     
-    function fetchLastNFTs() public view returns (BBlock[] memory) {
-        uint256 itemCount = 12;
-        uint256 currentIndex = 0;
-        uint256 x;
-        if(bblocksUpdated.length > 12) {
-            x = bblocksUpdated.length - 12;
-        }
-        else {
-            x = 0;
-        }
-        BBlock[] memory items = new BBlock[](itemCount);
-        for (uint i = x; i < bblocksUpdated.length; i++) {
-            BBlock storage currentItem = idToBBlock[bblocksUpdated[i]];
-            items[currentIndex] = currentItem;
-            currentIndex += 1;          
-        }
-        return items;
-    }
+    // function fetchLastNFTs() public view returns (BBlock[] memory) {
+    //     uint256 itemCount = 12;
+    //     uint256 currentIndex = 0;
+    //     uint256 x;
+    //     if(bblocksUpdated.length > 12) {
+    //         x = bblocksUpdated.length - 12;
+    //     }
+    //     else {
+    //         x = 0;
+    //     }
+    //     BBlock[] memory items = new BBlock[](itemCount);
+    //     for (uint i = x; i < bblocksUpdated.length; i++) {
+    //         BBlock storage currentItem = idToBBlock[bblocksUpdated[i]];
+    //         items[currentIndex] = currentItem;
+    //         currentIndex += 1;          
+    //     }
+    //     return items;
+    // }
 
     // function fetchMyNFTs() public view returns (BBlock[] memory) {
     //     uint256 totalItemCount = _bblockIds.current();
