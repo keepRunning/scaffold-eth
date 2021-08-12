@@ -17,14 +17,13 @@ contract BBoard is ERC721, ERC721URIStorage, ERC721Enumerable, Pausable {
 
     address payable owner;
     //this is a fee in deployed network (matic) currency
-    uint256 basefee = 500;
+    uint256 basefee = 1;
 
     constructor() ERC721("BulletinBlock", "BBLK") {
         owner = payable(msg.sender);
     }
 
     struct BBlock {
-        // bytes11 FATname; // 8.3 DOS filename
         uint256 bblockId;
         address payable seller;
         address payable owner;
@@ -35,16 +34,16 @@ contract BBoard is ERC721, ERC721URIStorage, ERC721Enumerable, Pausable {
     //map where bblockId returns the BBlock
     mapping(uint256 => BBlock) private idToBBlock;
 
-    event BBlockCreated(
-        uint256 indexed bblockId,
-        address seller,
-        address owner,
-        uint256 price,
-        bool sold
-    );
+    event BBlockCreated(uint256 indexed bblockId, address owner);
+    event SaleCreated(uint256 indexed bblockId, address seller, uint256 price);
 
     function getBasefee() public view returns (uint256) {
         return basefee;
+    }
+
+    function setBasefee(uint256 x) public {
+        require(msg.sender == owner);
+        basefee = x;
     }
 
     function createToken() public payable returns (uint256) {
@@ -54,21 +53,41 @@ contract BBoard is ERC721, ERC721URIStorage, ERC721Enumerable, Pausable {
         uint256 newBBlockId = _bblockIds.current();
         _mint(msg.sender, newBBlockId);
         //save new bblock
-        createNewBBlock(newBBlockId);
+        addNewBBlock(newBBlockId);
         //needed for subsequent sale of the block/nft
         return newBBlockId;
+    }
+
+    function addNewBBlock(uint256 bblockId) private {
+        idToBBlock[bblockId] = BBlock(
+            bblockId,
+            payable(address(0)),
+            payable(msg.sender),
+            0,
+            false
+        );
+
+        emit BBlockCreated(bblockId, payable(msg.sender));
     }
 
     function addContentToBBlock(uint256 bblockId, string memory URI) public {
         require(
             msg.sender == ERC721.ownerOf(bblockId),
-            "You don't own this NFT"
+            "You don't own this BBlock"
         );
         _setTokenURI(bblockId, URI);
     }
 
-    //put the BBlock for sale
-    function createBBlockSale(uint256 bblockId, uint256 price) public payable {
+    function sellBBlock(uint256 bblockId, uint256 price) public payable {
+        require(
+            idToBBlock[bblockId].seller == payable(address(0)),
+            "BBlock already for sale"
+        );
+        require(
+            msg.sender == ERC721.ownerOf(bblockId),
+            "You don't own this BBlock"
+        );
+
         require(price > 0, "Price must be at least 1 wei");
         require(msg.value == getBasefee(), "Price must be equal to basefee");
 
@@ -82,79 +101,74 @@ contract BBoard is ERC721, ERC721URIStorage, ERC721Enumerable, Pausable {
         idToBBlock[bblockId].seller = payable(msg.sender);
         idToBBlock[bblockId].price = price;
         idToBBlock[bblockId].sold = false;
-        _setTokenURI(bblockId, "");
 
-        emit BBlockCreated(
-            bblockId,
-            msg.sender,
-            address(this),
-            price,
-            false
-        );
+        emit SaleCreated(bblockId, msg.sender, price);
     }
 
-    function buyBBlock(uint256 bblockId) public payable {
-        uint256 price = idToBBlock[bblockId].price;
-        uint256 tokenId = idToBBlock[bblockId].bblockId;
+    //needs fixin
+    function cancelSell(uint256 bblockId) public {
+        // require(1 == 2, "nope");
 
-        require(msg.value == price);
+        require(
+            payable(msg.sender) == idToBBlock[bblockId].seller,
+            "You are not the seller of this BBlock"
+        );
+
+        //transfer ownership
+        transferFrom(address(this), msg.sender, bblockId);
+
+        idToBBlock[bblockId].owner = payable(msg.sender);
+        idToBBlock[bblockId].seller = payable(address(0));
+        idToBBlock[bblockId].price = 0;
+        idToBBlock[bblockId].sold = false;
+    }
+
+    //needs fixin
+    function buyBBlock(uint256 bblockId) public payable {
+        // require(1 == 2, "nope");
+        require(
+            idToBBlock[bblockId].seller != payable(address(0)),
+            "BBlock not for sale"
+        );
+        uint256 price = idToBBlock[bblockId].price;
+
+        require(msg.value == price, "Value must be equal to price");
 
         //pay the seller
         idToBBlock[bblockId].seller.transfer(msg.value);
 
         //transfer ownership
-        transferFrom(address(this), msg.sender, tokenId);
-
-        payable(owner).transfer(getBasefee());
+        transferFrom(address(this), msg.sender, bblockId);
 
         idToBBlock[bblockId].seller = payable(address(0));
         idToBBlock[bblockId].owner = payable(msg.sender);
         idToBBlock[bblockId].sold = true;
+
+        payable(owner).transfer(getBasefee());
     }
 
-    function createNewBBlock(uint256 bblockId) private {
-        //create new bblock
-        idToBBlock[bblockId] = BBlock(
-            bblockId,
-            payable(address(0)),
-            payable(msg.sender),
-            0,
-            false
-        );
-
-        emit BBlockCreated(
-            bblockId,
-            payable(address(0)),
-            payable(msg.sender),
-            0,
-            false
-        );
+    function getPrice(uint256 bblockId) public view returns (uint256) {
+        return idToBBlock[bblockId].price;
     }
 
-    function fetchBlocksByAddress(address adr)
+    function fetchBBlocksByAddress(address adr)
         public
         view
         returns (BBlock[] memory)
-    {}
-
-    function getBBlockIdCounter() public view returns (uint256) {
-        return _bblockIds.current();
-    }
-
-    function fetchMyNFTs() public view returns (BBlock[] memory) {
+    {
         uint256 totalItemCount = _bblockIds.current();
         uint256 itemCount = 0;
         uint256 currentIndex = 0;
 
         for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToBBlock[i + 1].owner == msg.sender) {
+            if (idToBBlock[i + 1].owner == adr) {
                 itemCount += 1;
             }
         }
 
         BBlock[] memory items = new BBlock[](itemCount);
         for (uint256 i = 0; i < totalItemCount; i++) {
-            if (idToBBlock[i + 1].owner == msg.sender) {
+            if (idToBBlock[i + 1].owner == adr) {
                 uint256 currentId = i + 1;
                 BBlock storage currentItem = idToBBlock[currentId];
                 items[currentIndex] = currentItem;
@@ -163,6 +177,33 @@ contract BBoard is ERC721, ERC721URIStorage, ERC721Enumerable, Pausable {
         }
         return items;
     }
+
+    function getBBlockIdCounter() public view returns (uint256) {
+        return _bblockIds.current();
+    }
+
+    // function fetchMyNFTs() public view returns (BBlock[] memory) {
+    //     uint256 totalItemCount = _bblockIds.current();
+    //     uint256 itemCount = 0;
+    //     uint256 currentIndex = 0;
+
+    //     for (uint256 i = 0; i < totalItemCount; i++) {
+    //         if (idToBBlock[i + 1].owner == payable(msg.sender)) {
+    //             itemCount += 1;
+    //         }
+    //     }
+
+    //     BBlock[] memory items = new BBlock[](itemCount);
+    //     for (uint256 i = 0; i < totalItemCount; i++) {
+    //         if (idToBBlock[i + 1].owner == payable(msg.sender)) {
+    //             uint256 currentId = i + 1;
+    //             BBlock storage currentItem = idToBBlock[currentId];
+    //             items[currentIndex] = currentItem;
+    //             currentIndex += 1;
+    //         }
+    //     }
+    //     return items;
+    // }
 
     function _burn(uint256 tokenId)
         internal

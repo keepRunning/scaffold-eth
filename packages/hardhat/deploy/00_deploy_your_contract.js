@@ -25,22 +25,22 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   // });
 
   // const NFT = await ethers.getContract("NFT", deployer);
-  // const BBoard = await ethers.getContract("BBoard", deployer);
-  // let baseFee = await NFT.getBasefee();
-  //  baseFee = baseFee.toString();
+  const BBoard = await ethers.getContract("BBoard", deployer);
+  let baseFee = await BBoard.getBasefee();
+   baseFee = baseFee.toString();
 
-  // console.log(baseFee);
+  console.log(baseFee);
 
-  // for(let count = 1; count<=20;count++){
-  //   await NFT.createBBlock({value:baseFee});
-  //   console.log(count + "/20 BBlocks minted");
-  // }
+  for(let count = 1; count<=20;count++){
+    await BBoard.createToken({value:baseFee});
+    console.log(count + "/20 BBlocks minted");
+  }
 
 
-  // console.log("20 BBlocks minted for deployer " + deployer)
+  console.log("20 BBlocks minted for deployer " + deployer)
 
-  // const idsCounter = await NFT.getTokenIdCounter()
-  // console.log("tokenIds counter: "+ idsCounter[0].toNumber())
+  const idsCounter = await BBoard.getBBlockIdCounter()
+  console.log("tokenIds counter: "+ idsCounter)
 
 
   /*
