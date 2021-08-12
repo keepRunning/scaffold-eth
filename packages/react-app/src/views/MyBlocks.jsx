@@ -144,6 +144,7 @@ const useStyles = makeStyles((theme) => ({
 
 function MainScroll() {
   const classes = useStyles();
+  // TODO fetch blocks from contract and render
   return (
     <div className={classes.root}>
       <Grid container justify="center">
@@ -223,16 +224,6 @@ function RecentlySavedBlocks({limit}) {
       <Grid container spacing={3}>
         <div style={{border: '1px solid black'}}>
           <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Recently Saved Blocks ({limit})</h2>
-          <Input
-            onChange={e => {
-              setNewFilterAddress(e.target.value);
-            }}
-          />
-          <Button
-            style={{ marginTop: 8 }}
-            onClick={async () => { console.log('TODO filter by address') }}
-          >Filter Blocks by Address
-          </Button>
           <Grid container spacing={3,0} >
             {ansiUriArr.map((uri, i) => (
                 <Grid key={"ansi2-" + i} item xs >
@@ -253,14 +244,34 @@ function RecentlySavedBlocks({limit}) {
   )
 }
 
+function MintBlockCard({ readContracts, blockMintFee } ) {
+  //const tokenSupply = useContractReader(readContracts, "BBoard", "tokenSupply");
+  const tokenSupply = useContractReader(readContracts, "BBoard", "getBBlockIdCounter");
+
+  const nextBlockID = tokenSupply ? tokenSupply.toNumber() + 1 : 0; // XXX check, off by 1?
+  const classes = useStyles();
+  return (
+        <Grid item xs >
+          <Paper className={classes.paper}>
+            <div className="ansi-wrapper" style={{color: 'white', maxWidth: 400}}>
+              <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', height: 240, width: 284 }} tokenURI={'buynextblock.txt'} />
+            </div>
+            <h3>THIS NEXT BLOCK COULD BE YOURS!!!</h3>
+            <h3>Mint fee: {blockMintFee ? blockMintFee.toString() : '...loading' }</h3>
+            <ul><li>Row: {Math.floor(nextBlockID / 4)}</li><li>Col: {nextBlockID % 4}</li><li>Owner: YOU???</li></ul>
+          </Paper>
+        </Grid>
+  )
+}
+
 function MyBlockCard({ readContracts, index, ownerAddress } ) {
   const tokenId = useContractReader(readContracts, "BBoard", "tokenOfOwnerByIndex", [ownerAddress, index]);
   const tokenUri = useContractReader(readContracts, "BBoard", "tokenURI", [tokenId]);
-  //function BlockCard({ uriPath, index, name, ownerAddress } ) {
+  const classes = useStyles();
   return (
         <Grid item xs >
-          <Paper className={"classes.paper"}>
-            <div className="ansi-wrapper" style={{maxWidth: 400}}>
+          <Paper className={classes.paper} style={{maxWidth: 400}}>
+            <div className="ansi-wrapper">
               <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', height: 240, width: 284 }} tokenURI={tokenUri ? tokenUri : 'tna1.ans'} />
             </div>
             <h3>FILE: {tokenUri}</h3>
@@ -298,26 +309,40 @@ export default function MyBlocks({
         <h2>Bulletin Block System Permissionless Distributed UI:</h2>
         {/* <h4>purpose: {purpose}</h4> */}
         <MainScroll />
-        <Grid container spacing={3}>
-          <div>
-            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Your Blocks ({myBBlocksCount ? myBBlocksCount.toString() : 0})</h2>
-            <div>
-              <div>
-              <Grid container spacing={3,0} >
+        <Grid container justify="center">
+          <Grid item>
+            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Your Blocks ({myBBlocksCount ? myBBlocksCount.toString() : 0})</h2>
+            <Input
+              onChange={e => {
+                setNewFilterAddress(e.target.value);
+              }}
+            />
+            <Button
+              style={{ marginTop: 8 }}
+              onClick={async () => { console.log('TODO filter by address') }}
+            >Filter Blocks by Address
+            </Button>
+            <Grid container spacing={3,0} >
               {
                 [...Array(myBBlocksCount ? myBBlocksCount.toNumber() : 0).keys()].map(i =>
                   (<MyBlockCard readContracts={readContracts} index={i} ownerAddress={address} />)
                 )
               }
-              </Grid></div>
-              <div>{ /* my1stBBlockTokenId ? my1stBBlockTokenId.toString() : 'nada' */ }</div>
-              <div>{ my1stBBlockTokenURI ? my1stBBlockTokenURI : 'nada' }</div>
-
-
-            </div>
-            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Mint/Buy a Block</h2>
-            <p>Mint fee: {blockMintFee ? blockMintFee.toString() : '...loading' }</p>
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item>
+                <p>
+                  <a href="#">Load more...</a>
+                </p>
+              </Grid>
+            </Grid>
+            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Mint/Buy a Block</h2>
+            <Grid container justify="center"><Grid item>
+              <MintBlockCard readContracts={readContracts} blockMintFee={blockMintFee} />
+            </Grid></Grid>
             <Button
+              /* MUI color="primary" variant="outlined" */
+              type="primary" size="large"
               style={{ marginTop: 8 }}
               onClick={async () => {
                 /* look how you call setPurpose on your contract: */
@@ -345,7 +370,7 @@ export default function MyBlocks({
             >
               Mint!
             </Button>
-          </div>
+          </Grid>
         </Grid>
         <Divider />
         <RecentlySavedBlocks limit={3} />
