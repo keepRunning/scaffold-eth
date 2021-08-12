@@ -21,6 +21,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Modal from '@material-ui/core/Modal';
 
+const { ethers } = require("ethers");
 import { NFTStorage, File } from 'nft.storage';
 
 const nftStorageApiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQzYjgwMzQ4MzY1MWE4MDE5MjU5NzQ2MjY5ZjM1ZDI4NUMzMEJlQjkiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYyODE1NzYxNTc3NCwibmFtZSI6ImtleTEifQ.G9BNydhDBxYJqYr06xSW-hRbkj5AptqaijFokHPx3h0';
@@ -202,7 +203,6 @@ function MainScroll() {
   )
 }
 function RecentlySavedBlocks({limit}) {
-  const [newFilterAddress, setNewFilterAddress] = useState();
   const classes = useStyles();
   let ansiFileNames = [
     'tna1.ans',
@@ -289,6 +289,8 @@ export default function MyBlocks({
   purpose,
   setPurposeEvents,
   address,
+  filterAddress,
+  setFilterAddress,
   mainnetProvider,
   localProvider,
   yourLocalBalance,
@@ -297,8 +299,12 @@ export default function MyBlocks({
   readContracts,
   writeContracts,
 }) {
-  const [newPurpose, setNewPurpose] = useState("loading...");
-  const [newTokenURI, setNewTokenURI] = useState("loading...");
+  const [newFilterAddress, setNewFilterAddress] = useState();
+  const [addressBlockCount, setAddressBlockCount] = useState('...');
+
+  const blocksCount = myBBlocksCount ? (
+    address == filterAddress ? myBBlocksCount.toNumber() : addressBlockCount
+  ) : 0;
 
   return (
     <div>
@@ -311,28 +317,41 @@ export default function MyBlocks({
         <MainScroll />
         <Grid container justify="center">
           <Grid item>
-            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Your Blocks ({myBBlocksCount ? myBBlocksCount.toString() : 0})</h2>
+            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Your Blocks ({blocksCount})</h2>
+            <p>currently {addressBlockCount} blocks at {address}</p>
             <Input
               onChange={e => {
                 setNewFilterAddress(e.target.value);
               }}
             />
+            <Button>XXX Bug: copy your address and click below</Button>
             <Button
               style={{ marginTop: 8 }}
-              onClick={async () => { console.log('TODO filter by address') }}
-            >Filter Blocks by Address
+              onClick={async () => {
+                let addr;
+                try {
+                  addr = ethers.utils.getAddress(newFilterAddress);
+                } catch(e) {
+                  console.log('bad address ', newFilterAddress);
+                  return;
+                }
+                setFilterAddress(addr);
+                const result = await tx(readContracts.BBoard.balanceOf(addr));
+                setAddressBlockCount(result.toNumber());
+              }}
+            >Show Blocks of Another Address
             </Button>
             <Grid container spacing={3,0} >
               {
-                [...Array(myBBlocksCount ? myBBlocksCount.toNumber() : 0).keys()].map(i =>
-                  (<MyBlockCard readContracts={readContracts} index={i} ownerAddress={address} />)
+                [...Array(blocksCount).keys()].map(i =>
+                  (<MyBlockCard readContracts={readContracts} index={i} ownerAddress={filterAddress} />)
                 )
               }
             </Grid>
             <Grid container spacing={3}>
               <Grid item>
                 <p>
-                  <a href="#">Load more...</a>
+                  <a href="#">Load more... (assuming there are more)</a>
                 </p>
               </Grid>
             </Grid>

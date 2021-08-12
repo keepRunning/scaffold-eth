@@ -123,6 +123,7 @@ function App(props) {
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
+  const [filterAddress, setFilterAddress] = useState();
 
   const logoutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
@@ -511,6 +512,8 @@ function App(props) {
             <MyBlocks
               blockMintFee={blockMintFee}
               address={address}
+              filterAddress={filterAddress}
+              setFilterAddress={setFilterAddress}
               userSigner={userSigner}
               mainnetProvider={mainnetProvider}
               localProvider={localProvider}
