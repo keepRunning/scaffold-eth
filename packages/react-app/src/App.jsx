@@ -194,9 +194,10 @@ function App(props) {
 
   // keep track of a variable from the contract in the local React state:
   const purpose = useContractReader(readContracts, "YourContract", "purpose");
-  const myBBlocksCount = useContractReader(readContracts, "YourContract", "balanceOf", [address]);
-  const my1stBBlockTokenId = useContractReader(readContracts, "YourContract", "tokenOfOwnerByIndex", [address, 0]); // this would fail if no tokens owned
-  const my1stBBlockTokenURI = useContractReader(readContracts, "YourContract", "tokenURI", [my1stBBlockTokenId]); // this would fail if no tokens owned
+  const blockMintFee = useContractReader(readContracts, "BBoard", "getBasefee");
+  const myBBlocksCount = useContractReader(readContracts, "BBoard", "balanceOf", [address]);
+  const my1stBBlockTokenId = useContractReader(readContracts, "BBoard", "tokenOfOwnerByIndex", [address, 0]); // this would fail if no tokens owned
+  const my1stBBlockTokenURI = useContractReader(readContracts, "BBoard", "tokenURI", [my1stBBlockTokenId]); // this would fail if no tokens owned
 
   // 📟 Listen for broadcast events
   const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
@@ -508,6 +509,7 @@ function App(props) {
           </Route>
           <Route path="/blocks">
             <MyBlocks
+              blockMintFee={blockMintFee}
               address={address}
               userSigner={userSigner}
               mainnetProvider={mainnetProvider}

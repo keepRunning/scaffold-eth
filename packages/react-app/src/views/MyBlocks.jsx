@@ -2,6 +2,16 @@ import { SyncOutlined } from "@ant-design/icons";
 import { utils } from "ethers";
 import { Button, Card, DatePicker, Divider, Input, List, Progress, Slider, Spin, Switch } from "antd";
 import React, { useState } from "react";
+import {
+  useBalance,
+  useContractLoader,
+  useContractReader,
+  useEventListener,
+  useExchangePrice,
+  useGasPrice,
+  useOnBlock,
+  useUserSigner,
+} from "../hooks";
 import { Address, Balance } from "../components";
 import AnsiImageRender from "./AnsiImageRender"
 
@@ -218,8 +228,28 @@ function RecentlySavedBlocks({limit}) {
   )
 }
 
+function MyBlockCard({ readContracts, index, ownerAddress } ) {
+  const tokenId = useContractReader(readContracts, "BBoard", "tokenOfOwnerByIndex", [ownerAddress, index]);
+  const tokenUri = useContractReader(readContracts, "BBoard", "tokenURI", [tokenId]);
+  //function BlockCard({ uriPath, index, name, ownerAddress } ) {
+  return (
+      <Grid container spacing={3,0} >
+        <Grid item xs >
+          <Paper className={"classes.paper"}>
+            <div className="ansi-wrapper" style={{maxWidth: 400}}>
+              <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', height: 240, width: 284 }} tokenURI={tokenUri ? tokenUri : 'tna1.ans'} />
+            </div>
+            <h3>FILE: {tokenUri}</h3>
+            <ul><li>Row: {Math.floor(index / 4)}</li><li>Col: {index % 4}</li><li>Owner: {ownerAddress}</li></ul>
+          </Paper>
+        </Grid>
+
+      </Grid>
+  )
+}
 
 export default function MyBlocks({
+  blockMintFee,
   myBBlocksCount,
   my1stBBlockTokenId,
   my1stBBlockTokenURI,
@@ -245,6 +275,55 @@ export default function MyBlocks({
       <div style={{ border: "1px solid #cccccc", padding: 16, /*width: 400,*/ margin: "auto", marginTop: 64 }}>
         <h2>Bulletin Block System Permissionless Distributed UI:</h2>
         {/* <h4>purpose: {purpose}</h4> */}
+        <Grid container spacing={3}>
+          <div>
+            <div>You own {myBBlocksCount ? myBBlocksCount.toString() : 0} bBlocks</div>
+            <div>
+              <div>
+              {
+                [...Array(myBBlocksCount ? myBBlocksCount.toNumber() : 0).keys()].map(i =>
+                  (<MyBlockCard readContracts={readContracts} index={i} ownerAddress={address} />)
+                )
+              }
+              </div>
+              <h3>Here's your 1st (if &gt; 0) tokenId</h3>
+              <div>{ my1stBBlockTokenId ? my1stBBlockTokenId.toString() : 'nada' }</div>
+              <div>{ my1stBBlockTokenURI ? my1stBBlockTokenURI : 'nada' }</div>
+
+
+            </div>
+            <p>Mint/Buy a Block!</p>
+            <p>Mint fee: {blockMintFee ? blockMintFee.toString() : '...loading' }</p>
+            <Button
+              style={{ marginTop: 8 }}
+              onClick={async () => {
+                /* look how you call setPurpose on your contract: */
+                /* notice how you pass a call back for tx updates too */
+                const result = tx(writeContracts.BBoard.createToken({
+                  value: blockMintFee
+                }), update => {
+                  console.log("📡 Transaction Update:", update);
+                  if (update && (update.status === "confirmed" || update.status === 1)) {
+                    console.log(" 🍾 Transaction " + update.hash + " finished!");
+                    console.log(
+                      " ⛽️ " +
+                      update.gasUsed +
+                      "/" +
+                      (update.gasLimit || update.gas) +
+                      " @ " +
+                      parseFloat(update.gasPrice) / 1000000000 +
+                      " gwei",
+                    );
+                  }
+                });
+                console.log("awaiting metamask/web3 confirm result...", result);
+                console.log(await result);
+              }}
+            >
+              Mint!
+            </Button>
+          </div>
+        </Grid>
         <Divider />
         <RecentlySavedBlocks limit={3} />
         <Divider />
