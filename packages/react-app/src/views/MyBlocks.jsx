@@ -142,6 +142,64 @@ const useStyles = makeStyles((theme) => ({
         },
 }));
 
+function MainScroll() {
+  const classes = useStyles();
+  return (
+    <div className={classes.root}>
+      <Grid container justify="center">
+        <div style={{padding: '5em'}}>
+          <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'center', fontWeight: 800}} className='foobar'>Genesis Scroll</h2>
+          <div className="ansi-grid-wrapper" style={{color: 'white', backgroundColor: 'black'}}>
+            <Grid container >
+              {'bbs1.ans|bbs2.ans|bbs3.ans|info1.txt'.split('|').map((uri, i) => (
+                      <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
+                        <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
+                      </div>
+              ))}
+            </Grid><Grid container spacing={3,0} >
+              {'bbs4.ans|bbs5.ans|bbs6.ans|info2.txt'.split('|').map((uri, i) => (
+                      <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
+                        <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
+                      </div>
+              ))}
+            </Grid><Grid container spacing={3,0} >
+              {'tna1.ans|tna2.ans|tnb1.ans|info3.txt'.split('|').map((uri, i) => (
+                      <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
+                        <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
+                      </div>
+              ))}
+            </Grid><Grid container spacing={3,0} >
+              {'tna3.ans|tna4.ans|tnb3.ans|tnb4.ans'.split('|').map((uri, i) => (
+                      <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
+                        <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
+                      </div>
+              ))}
+            </Grid><Grid container spacing={3,0} >
+              {'tna1.ans|tna2.ans|tnb1.ans|tnb2.ans'.split('|').map((uri, i) => (
+                      <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
+                        <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
+                      </div>
+              ))}
+            </Grid><Grid container spacing={3,0} >
+              {'tna1.ans|tna2.ans|tnb1.ans|tnb2.ans'.split('|').map((uri, i) => (
+                      <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
+                        <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
+                      </div>
+              ))}
+            </Grid>
+          </div>
+        </div>
+      </Grid>
+      <Grid container spacing={3}>
+        <Grid item>
+          <p>
+            <a href="#">View more...</a>
+          </p>
+        </Grid>
+      </Grid>
+    </div>
+  )
+}
 function RecentlySavedBlocks({limit}) {
   const [newFilterAddress, setNewFilterAddress] = useState();
   const classes = useStyles();
@@ -175,34 +233,6 @@ function RecentlySavedBlocks({limit}) {
             onClick={async () => { console.log('TODO filter by address') }}
           >Filter Blocks by Address
           </Button>
-          <div className="ansi-grid-wrapper">
-          <Grid container spacing={3,0} >
-
-            {'tna1.ans|tna2.ans|tnb1.ans|tnb2.ans'.split('|').map((uri, i) => (
-                    <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
-                      <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
-                    </div>
-            ))}
-          </Grid><Grid container spacing={3,0} >
-            {'tna3.ans|tna4.ans|tnb3.ans|tnb4.ans'.split('|').map((uri, i) => (
-                    <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
-                      <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
-                    </div>
-            ))}
-          </Grid><Grid container spacing={3,0} >
-            {'tna1.ans|tna2.ans|tnb1.ans|tnb2.ans'.split('|').map((uri, i) => (
-                    <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
-                      <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
-                    </div>
-            ))}
-          </Grid><Grid container spacing={3,0} >
-            {'tna1.ans|tna2.ans|tnb1.ans|tnb2.ans'.split('|').map((uri, i) => (
-                    <div key={"ansi1-" + i} className="ansi-wrapper" style={{maxWidth: 400}}>
-                      <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', width: 270 }} tokenURI={uri} />
-                    </div>
-            ))}
-          </Grid>
-          </div>
           <Grid container spacing={3,0} >
             {ansiUriArr.map((uri, i) => (
                 <Grid key={"ansi2-" + i} item xs >
@@ -267,6 +297,7 @@ export default function MyBlocks({
       <div style={{ border: "1px solid #cccccc", padding: 16, /*width: 400,*/ margin: "auto", marginTop: 64 }}>
         <h2>Bulletin Block System Permissionless Distributed UI:</h2>
         {/* <h4>purpose: {purpose}</h4> */}
+        <MainScroll />
         <Grid container spacing={3}>
           <div>
             <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Your Blocks ({myBBlocksCount ? myBBlocksCount.toString() : 0})</h2>
