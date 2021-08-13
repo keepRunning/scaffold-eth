@@ -1,7 +1,7 @@
 {
   "name": "@scaffold-eth/react-app",
   "version": "1.0.0",
-  "homepage": "https://keeprunning.github.io/scaffoldEthTest/",
+  "homepage": "https://keeprunning.github.io/scaffold-eth",
   "browserslist": {
     "production": [
       ">0.2%",
