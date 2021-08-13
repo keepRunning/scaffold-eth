@@ -6,9 +6,11 @@ export default function AnsiImageRender({ tokenURI, style }) {
   const [html, setNewState] = useState('');
   const [isFetching, setIsFetching] = useState(false);
 
+  // tokenURI = 'ipfs://bafyreih4ki2rd2yow7yh6m3vyq27icq35dhtlpuuq3xa34aknzegpcvtu4/metadata.json';
   useEffect(() => {
     fetchHtml(tokenURI);
   }, [tokenURI]);
+  
 
   const fetchHtml = (url) => {
     if (!url || url == '')
@@ -20,26 +22,45 @@ export default function AnsiImageRender({ tokenURI, style }) {
     }
     setIsFetching(true);
 
-    fetch(url, {
-      "method": "GET",
-      "headers": {
-      }
-    })
-      .then(response => response.arrayBuffer())
-      .then(response => {
-
-        let decoder = new TextDecoder('ISO-8859-1');
-        let text = decoder.decode(response);
-
-        const ansi_up = new AnsiUp();
-        let htmlResp = ansi_up.ansi_to_html(text);
-        setNewState(htmlResp);
-        setIsFetching(false);
+    if (url.endsWith('.json')) {
+      fetch(url, {
+        "method": "GET",
+        "headers": {
+        }
       })
-      .catch(err => {
-        console.log(err);
-        setIsFetching(false);
-      });
+        .then(response => response.json())
+        .then(response => {
+          let tokenUri = response.properties.srcFile ?? 'tna1.ans';
+          fetchHtml(tokenUri);
+        })
+        .catch(err => {
+          console.log(err);
+          setIsFetching(false);
+        });
+
+    // } else if (url.endsWith('.ans')) {
+      } else {
+      fetch(url, {
+        "method": "GET",
+        "headers": {
+        }
+      })
+        .then(response => response.arrayBuffer())
+        .then(response => {
+
+          let decoder = new TextDecoder('ISO-8859-1');
+          let text = decoder.decode(response);
+
+          const ansi_up = new AnsiUp();
+          let htmlResp = ansi_up.ansi_to_html(text);
+          setNewState(htmlResp);
+          setIsFetching(false);
+        })
+        .catch(err => {
+          console.log(err);
+          setIsFetching(false);
+        });
+    }
   }
 
   if (!html && !isFetching) {
