@@ -269,6 +269,7 @@ function MintBlockCard({ readContracts, blockMintFee } ) {
 }
 
 function BlockCardsForSale({ tx, readContracts, writeContracts, browserAddress } ) {
+  return (<span>BlockCardsForSale is broken</span>);
   const bBlocks = useContractReader(readContracts, "BBoard", "fetchBBlocksForSale");
   // [bblockId, owner, price, seller]
   return bBlocks ? bBlocks.map((b) => (<BlockCard tx={tx} writeContracts={writeContracts} readContracts={readContracts} browserAddress={browserAddress} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
@@ -276,6 +277,7 @@ function BlockCardsForSale({ tx, readContracts, writeContracts, browserAddress }
 
 function BlockCardsByAddress({ tx, readContracts, writeContracts, ownerAddress, browserAddress } ) {
   const bBlocks = useContractReader(readContracts, "BBoard", "fetchBBlocksByAddress", [ownerAddress]);
+  console.log(bBlocks);
   // [bblockId, owner, price, seller]
   return bBlocks ? bBlocks.map((b) => (<BlockCard tx={tx} writeContracts={writeContracts} readContracts={readContracts} browserAddress={browserAddress} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
 }
@@ -369,14 +371,14 @@ export default function MyBlocks({
         <MainScroll />
         <Grid container justifyContent="center">
           <Grid item>
-            <h2 className={classes.sectionH2}>Your Blocks ({blocksCount})</h2>
-            <p>currently {addressBlockCount} blocks at {address}</p>
+            <h2 className={classes.sectionH2}>{filterAddress == addressBlockCount ? 'Your Blocks' : 'Blocks By Address'} ({blocksCount})</h2>
+            <p>currently {addressBlockCount} blocks at {filterAddress}</p>
             <Input
               onChange={e => {
                 setNewFilterAddress(e.target.value);
               }}
             />
-            <Button>XXX Bug: copy your address and click below</Button>
+            <Button>XXX Bug: You need to switch tabs to refresh the new blocks</Button>
             <Button
               style={{ marginTop: 8 }}
               onClick={async () => {
