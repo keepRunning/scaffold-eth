@@ -264,24 +264,30 @@ function MintBlockCard({ readContracts, blockMintFee } ) {
   )
 }
 
-function BlockCards({ readContracts, ownerAddress } ) {
-  const bBlocks = useContractReader(readContracts, "BBoard", "fetchBBlocksByAddress", [ownerAddress]);
+function BlockCardsForSale({ tx, readContracts, writeContracts, browserAddress } ) {
+  const bBlocks = useContractReader(readContracts, "BBoard", "fetchBBlocksForSale");
   // [bblockId, owner, price, seller]
-  console.log(bBlocks);
-  return bBlocks ? bBlocks.map((b) => (<BlockCard readContracts={readContracts} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
+  return bBlocks ? bBlocks.map((b) => (<BlockCard tx={tx} writeContracts={writeContracts} readContracts={readContracts} browserAddress={browserAddress} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
 }
 
-function BlockCard({ readContracts, tokenId, ownerAddress, seller, price } ) {
+function BlockCardsByAddress({ tx, readContracts, writeContracts, ownerAddress, browserAddress } ) {
+  const bBlocks = useContractReader(readContracts, "BBoard", "fetchBBlocksByAddress", [ownerAddress]);
+  // [bblockId, owner, price, seller]
+  return bBlocks ? bBlocks.map((b) => (<BlockCard tx={tx} writeContracts={writeContracts} readContracts={readContracts} browserAddress={browserAddress} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
+}
+
+function BlockCard({ tx, readContracts, writeContracts, browserAddress, tokenId, ownerAddress, seller, price } ) {
   const tokenURI = useContractReader(readContracts, "BBoard", "tokenURI", [tokenId]);
   // XXX is tokenId and bBlockId the same? is it reliable to calculate position?
   const classes = useStyles();
+  const defaultSellPrice = 1000;
   return (
         <Grid key={tokenId} item xs >
           <Paper className={classes.paper} style={{maxWidth: 400}}>
-            <div className="ansi-wrapper">
+            <div className="ansi-wrapper" style={{display: 'inline-block'}} >
               <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', height: 240, width: 284 }} tokenURI={tokenURI ? tokenURI : 'tna1.ans'} />
             </div>
-            <h3>FILE: {tokenURI}</h3>
+            <h3>URI: {tokenURI}</h3>
             <ul>
               <li>Row: {Math.floor(tokenId / 4)}</li>
               <li>Col: {tokenId % 4}</li>
@@ -289,6 +295,36 @@ function BlockCard({ readContracts, tokenId, ownerAddress, seller, price } ) {
               <li>Sale Status: {seller}</li>
               <li>Price: {price ? price.toString() : 'N/A'}</li>
             </ul>
+            <Button
+              /* MUI color="primary" variant="outlined" */
+              type="primary" size="large"
+              disabled={ownerAddress != browserAddress}
+              style={{ marginTop: 8 }}
+              onClick={async () => {
+                /* look how you call setPurpose on your contract: */
+                /* notice how you pass a call back for tx updates too */
+                // TODO function doesn't return but emits event we should watch for
+                const result = tx(writeContracts.BBoard.sellBBlock(tokenId, defaultSellPrice), update => {
+                  console.log("📡 Transaction Update:", update);
+                  if (update && (update.status === "confirmed" || update.status === 1)) {
+                    console.log(" 🍾 Transaction " + update.hash + " finished!");
+                    console.log(
+                      " ⛽️ " +
+                      update.gasUsed +
+                      "/" +
+                      (update.gasLimit || update.gas) +
+                      " @ " +
+                      parseFloat(update.gasPrice) / 1000000000 +
+                      " gwei",
+                    );
+                  }
+                });
+                console.log("awaiting metamask/web3 confirm result...", result);
+                console.log(await result);
+              }}
+            >
+              Put For Sale @{defaultSellPrice}!
+            </Button>
           </Paper>
         </Grid>
   )
@@ -353,7 +389,18 @@ export default function MyBlocks({
             >Show Blocks of Another Address
             </Button>
             <Grid container spacing={3,0} >
-              <BlockCards readContracts={readContracts} ownerAddress={filterAddress} />
+              <BlockCardsByAddress tx={tx} readContracts={readContracts} writeContracts={writeContracts} browserAddress={address} ownerAddress={filterAddress} />
+            </Grid>
+            <Grid container spacing={3}>
+              <Grid item>
+                <p>
+                  <a href="#">Load more... (assuming there are more)</a>
+                </p>
+              </Grid>
+            </Grid>
+            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Blocks For Sale</h2>
+            <Grid container spacing={3,0} >
+              <BlockCardsForSale tx={tx} readContracts={readContracts} writeContracts={writeContracts} browserAddress={address} />
             </Grid>
             <Grid container spacing={3}>
               <Grid item>
