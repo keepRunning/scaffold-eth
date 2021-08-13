@@ -148,7 +148,7 @@ function MainScroll() {
   // TODO fetch blocks from contract and render
   return (
     <div className={classes.root}>
-      <Grid container justify="center">
+      <Grid container justifyContent="center">
         <div style={{padding: '5em'}}>
           <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'center', fontWeight: 800}} className='foobar'>Genesis Scroll</h2>
           <div className="ansi-grid-wrapper" style={{color: 'white', backgroundColor: 'black'}}>
@@ -264,18 +264,31 @@ function MintBlockCard({ readContracts, blockMintFee } ) {
   )
 }
 
-function MyBlockCard({ readContracts, index, ownerAddress } ) {
-  const tokenId = useContractReader(readContracts, "BBoard", "tokenOfOwnerByIndex", [ownerAddress, index]);
-  const tokenUri = useContractReader(readContracts, "BBoard", "tokenURI", [tokenId]);
+function BlockCards({ readContracts, ownerAddress } ) {
+  const bBlocks = useContractReader(readContracts, "BBoard", "fetchBBlocksByAddress", [ownerAddress]);
+  // [bblockId, owner, price, seller]
+  console.log(bBlocks);
+  return bBlocks ? bBlocks.map((b) => (<BlockCard readContracts={readContracts} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
+}
+
+function BlockCard({ readContracts, tokenId, ownerAddress, seller, price } ) {
+  const tokenURI = useContractReader(readContracts, "BBoard", "tokenURI", [tokenId]);
+  // XXX is tokenId and bBlockId the same? is it reliable to calculate position?
   const classes = useStyles();
   return (
-        <Grid item xs >
+        <Grid key={tokenId} item xs >
           <Paper className={classes.paper} style={{maxWidth: 400}}>
             <div className="ansi-wrapper">
-              <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', height: 240, width: 284 }} tokenURI={tokenUri ? tokenUri : 'tna1.ans'} />
+              <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', height: 240, width: 284 }} tokenURI={tokenURI ? tokenURI : 'tna1.ans'} />
             </div>
-            <h3>FILE: {tokenUri}</h3>
-            <ul><li>Row: {Math.floor(index / 4)}</li><li>Col: {index % 4}</li><li>Owner: {ownerAddress}</li></ul>
+            <h3>FILE: {tokenURI}</h3>
+            <ul>
+              <li>Row: {Math.floor(tokenId / 4)}</li>
+              <li>Col: {tokenId % 4}</li>
+              <li>Owner: {ownerAddress}</li>
+              <li>Sale Status: {seller}</li>
+              <li>Price: {price ? price.toString() : 'N/A'}</li>
+            </ul>
           </Paper>
         </Grid>
   )
@@ -284,8 +297,6 @@ function MyBlockCard({ readContracts, index, ownerAddress } ) {
 export default function MyBlocks({
   blockMintFee,
   myBBlocksCount,
-  my1stBBlockTokenId,
-  my1stBBlockTokenURI,
   purpose,
   setPurposeEvents,
   address,
@@ -315,7 +326,7 @@ export default function MyBlocks({
         <h2>Bulletin Block System Permissionless Distributed UI:</h2>
         {/* <h4>purpose: {purpose}</h4> */}
         <MainScroll />
-        <Grid container justify="center">
+        <Grid container justifyContent="center">
           <Grid item>
             <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Your Blocks ({blocksCount})</h2>
             <p>currently {addressBlockCount} blocks at {address}</p>
@@ -342,11 +353,7 @@ export default function MyBlocks({
             >Show Blocks of Another Address
             </Button>
             <Grid container spacing={3,0} >
-              {
-                [...Array(blocksCount).keys()].map(i =>
-                  (<MyBlockCard readContracts={readContracts} index={i} ownerAddress={filterAddress} />)
-                )
-              }
+              <BlockCards readContracts={readContracts} ownerAddress={filterAddress} />
             </Grid>
             <Grid container spacing={3}>
               <Grid item>
@@ -355,8 +362,8 @@ export default function MyBlocks({
                 </p>
               </Grid>
             </Grid>
-            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Mint/Buy a Block</h2>
-            <Grid container justify="center"><Grid item>
+            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Mint an Empty Block</h2>
+            <Grid container justifyContent="center"><Grid item>
               <MintBlockCard readContracts={readContracts} blockMintFee={blockMintFee} />
             </Grid></Grid>
             <Button
@@ -366,9 +373,11 @@ export default function MyBlocks({
               onClick={async () => {
                 /* look how you call setPurpose on your contract: */
                 /* notice how you pass a call back for tx updates too */
-                const result = tx(writeContracts.BBoard.createToken({
+                // TODO we need to await return value of the function which is tokenId/bBlockId
+                //const result = tx(writeContracts.BBoard.createToken({
+                const _tx = await writeContracts.BBoard.createToken({
                   value: blockMintFee
-                }), update => {
+                });/*, update => {
                   console.log("📡 Transaction Update:", update);
                   if (update && (update.status === "confirmed" || update.status === 1)) {
                     console.log(" 🍾 Transaction " + update.hash + " finished!");
@@ -385,6 +394,16 @@ export default function MyBlocks({
                 });
                 console.log("awaiting metamask/web3 confirm result...", result);
                 console.log(await result);
+                */
+                let receipt = await _tx.wait(1);
+                console.log(receipt);
+                let evt = receipt.events.pop();
+                console.assert(evt.event == "BBlockCreated", "bad event returned");
+                console.log(evt);
+                //console.log('RETURNED ', evt.args.tokenId);
+                console.log('RETURNED ', evt.args[0].toNumber());
+                // TODO save this new bblockId in local state, load it above in Your Blocks
+
               }}
             >
               Mint!

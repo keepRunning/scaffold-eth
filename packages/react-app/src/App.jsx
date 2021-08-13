@@ -197,8 +197,8 @@ function App(props) {
   const purpose = useContractReader(readContracts, "YourContract", "purpose");
   const blockMintFee = useContractReader(readContracts, "BBoard", "getBasefee");
   const myBBlocksCount = useContractReader(readContracts, "BBoard", "balanceOf", [address]);
-  const my1stBBlockTokenId = useContractReader(readContracts, "BBoard", "tokenOfOwnerByIndex", [address, 0]); // this would fail if no tokens owned
-  const my1stBBlockTokenURI = useContractReader(readContracts, "BBoard", "tokenURI", [my1stBBlockTokenId]); // this would fail if no tokens owned
+  //const my1stBBlockTokenId = useContractReader(readContracts, "BBoard", "tokenOfOwnerByIndex", [address, 0]); // this would fail if no tokens owned
+  //const my1stBBlockTokenURI = useContractReader(readContracts, "BBoard", "tokenURI", [my1stBBlockTokenId]); // this would fail if no tokens owned
 
   // 📟 Listen for broadcast events
   const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
@@ -486,8 +486,6 @@ function App(props) {
               purpose={purpose}
               setPurposeEvents={setPurposeEvents}
               myBBlocksCount={myBBlocksCount}
-              my1stBBlockTokenId={my1stBBlockTokenId}
-              my1stBBlockTokenURI={my1stBBlockTokenURI}
             />
           </Route>
           <Route path="/about">
@@ -504,15 +502,13 @@ function App(props) {
               purpose={purpose}
               setPurposeEvents={setPurposeEvents}
               myBBlocksCount={myBBlocksCount}
-              my1stBBlockTokenId={my1stBBlockTokenId}
-              my1stBBlockTokenURI={my1stBBlockTokenURI}
             />
           </Route>
           <Route path="/blocks">
             <MyBlocks
               blockMintFee={blockMintFee}
               address={address}
-              filterAddress={filterAddress}
+              filterAddress={filterAddress ? filterAddress : address}
               setFilterAddress={setFilterAddress}
               userSigner={userSigner}
               mainnetProvider={mainnetProvider}
@@ -525,8 +521,6 @@ function App(props) {
               purpose={purpose}
               setPurposeEvents={setPurposeEvents}
               myBBlocksCount={myBBlocksCount}
-              my1stBBlockTokenId={my1stBBlockTokenId}
-              my1stBBlockTokenURI={my1stBBlockTokenURI}
             />
           </Route>
           <Route path="/mainnetdai">
