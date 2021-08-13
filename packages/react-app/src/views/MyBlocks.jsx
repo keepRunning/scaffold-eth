@@ -372,21 +372,21 @@ function MintBlockCard({ readContracts, blockMintFee } ) {
   )
 }
 
-function BlockCardsForSale({ tx, readContracts, writeContracts, browserAddress } ) {
-  return (<span>BlockCardsForSale is broken</span>);
+function BlockCardsForSale({ tx, readContracts, writeContracts, browserAddress, blockMintFee } ) {
+  //return (<span>BlockCardsForSale is broken</span>);
   const bBlocks = useContractReader(readContracts, "BBoard", "fetchBBlocksForSale");
   // [bblockId, owner, price, seller]
-  return bBlocks ? bBlocks.map((b) => (<BlockCard tx={tx} writeContracts={writeContracts} readContracts={readContracts} browserAddress={browserAddress} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
+  return bBlocks ? bBlocks.map((b) => (<BlockCard tx={tx} writeContracts={writeContracts} readContracts={readContracts} browserAddress={browserAddress} blockMintFee={blockMintFee} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
 }
 
-function BlockCardsByAddress({ tx, readContracts, writeContracts, ownerAddress, browserAddress } ) {
+function BlockCardsByAddress({ tx, readContracts, writeContracts, browserAddress, blockMintFee, ownerAddress } ) {
   const bBlocks = useContractReader(readContracts, "BBoard", "fetchBBlocksByAddress", [ownerAddress]);
   console.log(bBlocks);
   // [bblockId, owner, price, seller]
-  return bBlocks ? bBlocks.map((b) => (<BlockCard tx={tx} writeContracts={writeContracts} readContracts={readContracts} browserAddress={browserAddress} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
+  return bBlocks ? bBlocks.map((b) => (<BlockCard tx={tx} writeContracts={writeContracts} readContracts={readContracts} browserAddress={browserAddress} blockMintFee={blockMintFee} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
 }
 
-function BlockCard({ tx, readContracts, writeContracts, browserAddress, tokenId, ownerAddress, seller, price } ) {
+function BlockCard({ tx, readContracts, writeContracts, blockMintFee, browserAddress, tokenId, ownerAddress, seller, price } ) {
   const tokenURI = useContractReader(readContracts, "BBoard", "tokenURI", [tokenId]);
   // XXX is tokenId and bBlockId the same? is it reliable to calculate position?
   const classes = useStyles();
@@ -414,7 +414,9 @@ function BlockCard({ tx, readContracts, writeContracts, browserAddress, tokenId,
                 /* look how you call setPurpose on your contract: */
                 /* notice how you pass a call back for tx updates too */
                 // TODO function doesn't return but emits event we should watch for
-                const result = tx(writeContracts.BBoard.sellBBlock(tokenId, defaultSellPrice), update => {
+                const result = tx(writeContracts.BBoard.sellBBlock(tokenId, defaultSellPrice, {
+                  value: blockMintFee
+                }), update => {
                   console.log("📡 Transaction Update:", update);
                   if (update && (update.status === "confirmed" || update.status === 1)) {
                     console.log(" 🍾 Transaction " + update.hash + " finished!");
@@ -503,7 +505,7 @@ export default function MyBlocks({
             >Show Blocks of Another Address
             </Button>
             <Grid container spacing={3,0} >
-              <BlockCardsByAddress tx={tx} readContracts={readContracts} writeContracts={writeContracts} browserAddress={address} ownerAddress={filterAddress} />
+              <BlockCardsByAddress tx={tx} readContracts={readContracts} writeContracts={writeContracts} browserAddress={address} blockMintFee={blockMintFee} ownerAddress={filterAddress} />
             </Grid>
             <Grid container spacing={3}>
               <Grid item>
@@ -514,7 +516,7 @@ export default function MyBlocks({
             </Grid>
             <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Blocks For Sale</h2>
             <Grid container spacing={3,0} >
-              <BlockCardsForSale tx={tx} readContracts={readContracts} writeContracts={writeContracts} browserAddress={address} />
+              <BlockCardsForSale tx={tx} readContracts={readContracts} writeContracts={writeContracts} browserAddress={address} blockMintFee={blockMintFee} />
             </Grid>
             <Grid container spacing={3}>
               <Grid item>
