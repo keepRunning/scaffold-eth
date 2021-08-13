@@ -23,6 +23,7 @@ import Modal from '@material-ui/core/Modal';
 
 const { ethers } = require("ethers");
 import { NFTStorage, File } from 'nft.storage';
+import { StoreFileOnIPFS } from "../helpers";
 
 const nftStorageApiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDQzYjgwMzQ4MzY1MWE4MDE5MjU5NzQ2MjY5ZjM1ZDI4NUMzMEJlQjkiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYyODE1NzYxNTc3NCwibmFtZSI6ImtleTEifQ.G9BNydhDBxYJqYr06xSW-hRbkj5AptqaijFokHPx3h0';
 const nftsClient = new NFTStorage({ token: nftStorageApiKey })
@@ -116,6 +117,109 @@ function MakeBlockModal() {
       <button type="button" onClick={handleOpen}>
         Manage Blocks / Mint &amp; Write / CLICK ME TO OPEN DIALOG
       </button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        {body}
+      </Modal>
+    </div>
+  );
+}
+
+function ShowUpdateTokenUriModalDialog({ tx, writeContracts, tokenId, isDefaultOpen, hideButton, onClose }) {
+
+  isDefaultOpen = isDefaultOpen == undefined ? false : isDefaultOpen;
+  const classes = useModalStyles();
+  // getModalStyle is not a pure function, we roll the style only on the first render
+  const [modalStyle] = React.useState(getModalStyle);
+  const [open, setOpen] = React.useState(isDefaultOpen);
+  const [selectedFileState, setSelectedFileState] = React.useState({});
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    if (onClose) {
+      onClose();
+    };
+  };
+
+  var file;
+  var fileObjectUrl;
+  const processFile = (f) => {
+    console.log('file selected', f);
+    file = f;
+    const reader = new FileReader();
+    fileObjectUrl = window.URL.createObjectURL(f);
+    let userMessage = 'File selected'
+    let fileState = 'SELECTED';
+    setSelectedFileState({ file, fileObjectUrl, userMessage, fileState });
+  }
+
+  const uploadFileAndProceed = async () => {
+    let fileState = 'UPLOADING';
+    let userMessage = 'Please wait. File is being uploaded to IPFS...';
+    setSelectedFileState({ ...selectedFileState, userMessage, fileState })
+    let metadata = await StoreFileOnIPFS('name', 'description', undefined, selectedFileState.file);
+    userMessage = 'Approve transaction to change the token image to the newly uploaded image';
+    fileState = 'UPLOADED';
+    setSelectedFileState({ ...selectedFileState, metadata, userMessage, fileState });
+
+    const result = await tx(writeContracts.BBoard.addContentToBBlock(tokenId, metadata.url), update => {
+      console.log("📡 Transaction Update:", update);
+      if (update && (update.status === "confirmed" || update.status === 1)) {
+        console.log(" 🍾 Transaction " + update.hash + " finished!");
+        console.log(
+          " ⛽️ " +
+          update.gasUsed +
+          "/" +
+          (update.gasLimit || update.gas) +
+          " @ " +
+          parseFloat(update.gasPrice) / 1000000000 +
+          " gwei",
+        );
+      }
+    });
+
+    userMessage = 'Image has been updated';
+    fileState = 'APPROVED';
+    setSelectedFileState({ ...selectedFileState, metadata, userMessage, fileState });
+    handleClose();
+  }
+
+  const body = (
+    <div style={modalStyle} className={classes.paper}>
+      <h3>Change token image for Token Id: {tokenId}</h3>
+      <p>Upload your new ANSI file here.</p>
+      <p>The file will be uploaded to IPFS. This might take a while, please wait for it complete.</p>
+      <p>You will be prompted to Approve a transaction once the file is uploaded. This is to update the new ipfs url into your token contract.</p>
+      <p>Approve the transaction when the prompt is shown.</p>
+      <p>
+        <input type="file" id="input" onChange={(evt) => processFile(evt.target.files[0])} />
+      </p><p>
+        {fileObjectUrl}
+        {selectedFileState.fileObjectUrl &&
+          <AnsiImageRender style={{ fontSize: 24, lineHeight: '24px', width: 270, height: 270, overflow: 'scroll' }} tokenURI={selectedFileState.fileObjectUrl} />}
+      </p><p>
+        {selectedFileState.fileState == 'SELECTED' && selectedFileState.file && <button onClick={() => uploadFileAndProceed()}>Upload</button>}
+        {selectedFileState.fileState == 'UPLOADING' && <Spin />}
+        <p>{selectedFileState.userMessage}</p>
+      </p>
+    </div>
+  );
+
+  return (
+    <div>
+      {!hideButton &&
+        <button type="button" onClick={handleOpen}>
+          Update Token Uri
+        </button>
+      }
       <Modal
         open={open}
         onClose={handleClose}
@@ -355,6 +459,9 @@ export default function MyBlocks({
   const classes = useStyles();
   const [newFilterAddress, setNewFilterAddress] = useState();
   const [addressBlockCount, setAddressBlockCount] = useState('...');
+  const [newTokenId, setNewTokenId] = useState(0);
+  const [showUpdateTokenUriModal, setshowUpdateTokenUriModal] = useState(false);
+
 
   const blocksCount = myBBlocksCount ? (
     address == filterAddress ? myBBlocksCount.toNumber() : addressBlockCount
@@ -458,10 +565,19 @@ export default function MyBlocks({
                 console.log('RETURNED ', evt.args[0].toNumber());
                 // TODO save this new bblockId in local state, load it above in Your Blocks
 
+                if (evt.event == "BBlockCreated") {
+                  let mintedTokenId = evt.args[0].toNumber();
+                  console.log('block minted', mintedTokenId);
+                  setNewTokenId(mintedTokenId);
+                  setshowUpdateTokenUriModal(true);
+                }
               }}
             >
               Mint!
             </Button>
+            {showUpdateTokenUriModal && newTokenId && 
+            <ShowUpdateTokenUriModalDialog tokenId={newTokenId} isDefaultOpen={true} tx={tx} writeContracts={writeContracts} hideButton={true} onClose={() =>setshowUpdateTokenUriModal(false)}/>
+            }
           </Grid>
         </Grid>
         <Divider />

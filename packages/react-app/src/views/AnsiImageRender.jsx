@@ -4,12 +4,22 @@ import './AnsiImageRender.css';
 
 export default function AnsiImageRender({ tokenURI, style }) {
   const [html, setNewState] = useState('');
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     fetchHtml(tokenURI);
   }, [tokenURI]);
 
   const fetchHtml = (url) => {
+    if (!url || url == '')
+      return;
+
+    if (url.startsWith('ipfs://')) {
+      url = url.replace('ipfs://', 'https://dweb.link/ipfs/');
+      url = url.replaceAll(' ', '%20');
+    }
+    setIsFetching(true);
+
     fetch(url, {
       "method": "GET",
       "headers": {
@@ -24,13 +34,15 @@ export default function AnsiImageRender({ tokenURI, style }) {
         const ansi_up = new AnsiUp();
         let htmlResp = ansi_up.ansi_to_html(text);
         setNewState(htmlResp);
+        setIsFetching(false);
       })
       .catch(err => {
         console.log(err);
+        setIsFetching(false);
       });
   }
 
-  if (!html) {
+  if (!html && !isFetching) {
     fetchHtml(tokenURI);
   }
 
