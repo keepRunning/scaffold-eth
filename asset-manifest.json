@@ -1,24 +1,24 @@
 {
   "files": {
     "main.css": "/scaffold-eth/static/css/main.4e7a4a01.chunk.css",
-    "main.js": "/scaffold-eth/static/js/main.1c18a3f7.chunk.js",
-    "main.js.map": "/scaffold-eth/static/js/main.1c18a3f7.chunk.js.map",
+    "main.js": "/scaffold-eth/static/js/main.cdf7419f.chunk.js",
+    "main.js.map": "/scaffold-eth/static/js/main.cdf7419f.chunk.js.map",
     "runtime-main.js": "/scaffold-eth/static/js/runtime-main.9a971fbc.js",
     "runtime-main.js.map": "/scaffold-eth/static/js/runtime-main.9a971fbc.js.map",
     "static/css/2.1f31cb1c.chunk.css": "/scaffold-eth/static/css/2.1f31cb1c.chunk.css",
-    "static/js/2.3c8410a4.chunk.js": "/scaffold-eth/static/js/2.3c8410a4.chunk.js",
-    "static/js/2.3c8410a4.chunk.js.map": "/scaffold-eth/static/js/2.3c8410a4.chunk.js.map",
+    "static/js/2.a5a7f6fb.chunk.js": "/scaffold-eth/static/js/2.a5a7f6fb.chunk.js",
+    "static/js/2.a5a7f6fb.chunk.js.map": "/scaffold-eth/static/js/2.a5a7f6fb.chunk.js.map",
     "index.html": "/scaffold-eth/index.html",
     "static/css/2.1f31cb1c.chunk.css.map": "/scaffold-eth/static/css/2.1f31cb1c.chunk.css.map",
     "static/css/main.4e7a4a01.chunk.css.map": "/scaffold-eth/static/css/main.4e7a4a01.chunk.css.map",
-    "static/js/2.3c8410a4.chunk.js.LICENSE.txt": "/scaffold-eth/static/js/2.3c8410a4.chunk.js.LICENSE.txt",
+    "static/js/2.a5a7f6fb.chunk.js.LICENSE.txt": "/scaffold-eth/static/js/2.a5a7f6fb.chunk.js.LICENSE.txt",
     "static/media/AnsiImageRender.css": "/scaffold-eth/static/media/TopazPlus_a500_v1.0.aa8064ac.woff"
   },
   "entrypoints": [
     "static/js/runtime-main.9a971fbc.js",
     "static/css/2.1f31cb1c.chunk.css",
-    "static/js/2.3c8410a4.chunk.js",
+    "static/js/2.a5a7f6fb.chunk.js",
     "static/css/main.4e7a4a01.chunk.css",
-    "static/js/main.1c18a3f7.chunk.js"
+    "static/js/main.cdf7419f.chunk.js"
   ]
 }
