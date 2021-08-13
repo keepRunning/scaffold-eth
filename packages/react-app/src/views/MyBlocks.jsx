@@ -133,13 +133,17 @@ const useStyles = makeStyles((theme) => ({
     root: {
           flexGrow: 1,
         },
+    sectionH2: {
+          fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'center', fontWeight: 800
+    },
     paper: {
           padding: theme.spacing(2),
           textAlign: 'center',
           color: theme.palette.text.secondary,
+          backgroundColor: 'lemonchiffon',
           margin: 20,
           border: '2px solid black',
-          boxShadow: '2px 2px 4px 0',
+          boxShadow: '8px 8px 0px 0',
         },
 }));
 
@@ -150,7 +154,7 @@ function MainScroll() {
     <div className={classes.root}>
       <Grid container justifyContent="center">
         <div style={{padding: '5em'}}>
-          <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'center', fontWeight: 800}} className='foobar'>Genesis Scroll</h2>
+          <h2 className={classes.sectionH2}>Genesis Scroll</h2>
           <div className="ansi-grid-wrapper" style={{color: 'white', backgroundColor: 'black'}}>
             <Grid container >
               {'bbs1.ans|bbs2.ans|bbs3.ans|info1.txt'.split('|').map((uri, i) => (
@@ -223,7 +227,7 @@ function RecentlySavedBlocks({limit}) {
     <div className={classes.root}>
       <Grid container spacing={3}>
         <div style={{border: '1px solid black'}}>
-          <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', textAlign: 'left', fontWeight: 800}} className='foobar'>Recently Saved Blocks ({limit})</h2>
+          <h2 className={classes.sectionH2}>Recently Saved Blocks ({limit})</h2>
           <Grid container spacing={3,0} >
             {ansiUriArr.map((uri, i) => (
                 <Grid key={"ansi2-" + i} item xs >
@@ -252,7 +256,7 @@ function MintBlockCard({ readContracts, blockMintFee } ) {
   const classes = useStyles();
   return (
         <Grid item xs >
-          <Paper className={classes.paper}>
+          <Paper className={classes.paper} style={{backgroundColor: 'ghostwhite'}} >
             <div className="ansi-wrapper" style={{color: 'white', maxWidth: 400}}>
               <AnsiImageRender style={{fontSize: 24, lineHeight: '24px', height: 240, width: 284 }} tokenURI={'buynextblock.txt'} />
             </div>
@@ -346,6 +350,7 @@ export default function MyBlocks({
   readContracts,
   writeContracts,
 }) {
+  const classes = useStyles();
   const [newFilterAddress, setNewFilterAddress] = useState();
   const [addressBlockCount, setAddressBlockCount] = useState('...');
 
@@ -359,12 +364,12 @@ export default function MyBlocks({
         ⚙️ Here is an example UI that displays and sets the purpose in your smart contract:
       */}
       <div style={{ border: "1px solid #cccccc", padding: 16, /*width: 400,*/ margin: "auto", marginTop: 64 }}>
-        <h2>Bulletin Block System Permissionless Distributed UI:</h2>
+        {/*<h2>Bulletin Block System Permissionless Distributed UI:</h2>*/}
         {/* <h4>purpose: {purpose}</h4> */}
         <MainScroll />
         <Grid container justifyContent="center">
           <Grid item>
-            <h2 style={{fontFamily: '"Roboto", sans-serif', fontSize: '4em', fontWeight: 800}} className='foobar'>Your Blocks ({blocksCount})</h2>
+            <h2 className={classes.sectionH2}>Your Blocks ({blocksCount})</h2>
             <p>currently {addressBlockCount} blocks at {address}</p>
             <Input
               onChange={e => {
