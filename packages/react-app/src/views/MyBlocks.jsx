@@ -217,7 +217,7 @@ function ShowUpdateTokenUriModalDialog({ tx, writeContracts, tokenId, isDefaultO
     <div>
       {!hideButton &&
         <button type="button" onClick={handleOpen}>
-          Update Token Uri
+          Change ANSi file
         </button>
       }
       <Modal
@@ -381,7 +381,6 @@ function BlockCardsForSale({ tx, readContracts, writeContracts, browserAddress, 
 
 function BlockCardsByAddress({ tx, readContracts, writeContracts, browserAddress, blockMintFee, ownerAddress } ) {
   const bBlocks = useContractReader(readContracts, "BBoard", "fetchBBlocksByAddress", [ownerAddress]);
-  console.log(bBlocks);
   // [bblockId, owner, price, seller]
   return bBlocks ? bBlocks.map((b) => (<BlockCard tx={tx} writeContracts={writeContracts} readContracts={readContracts} browserAddress={browserAddress} blockMintFee={blockMintFee} tokenId={b.bblockId} ownerAddress={b.owner} seller={b.seller} price={b.price} />)) : (<span>...loading</span>);
 }
@@ -391,6 +390,7 @@ function BlockCard({ tx, readContracts, writeContracts, blockMintFee, browserAd
   // XXX is tokenId and bBlockId the same? is it reliable to calculate position?
   const classes = useStyles();
   const defaultSellPrice = 1000;
+  let localTokenId = tokenId.toNumber();
   return (
         <Grid key={tokenId} item xs >
           <Paper className={classes.paper} style={{maxWidth: 400}}>
@@ -399,12 +399,14 @@ function BlockCard({ tx, readContracts, writeContracts, blockMintFee, browserAd
             </div>
             <h3>URI: {tokenURI}</h3>
             <ul>
+              <li>TokenId: {localTokenId}</li>
               <li>Row: {Math.floor(tokenId / 4)}</li>
               <li>Col: {tokenId % 4}</li>
               <li>Owner: {ownerAddress}</li>
               <li>Sale Status: {seller}</li>
               <li>Price: {price ? price.toString() : 'N/A'}</li>
             </ul>
+            <ShowUpdateTokenUriModalDialog tokenId={localTokenId} isDefaultOpen={false} tx={tx} writeContracts={writeContracts} hideButton={false} />
             <Button
               /* MUI color="primary" variant="outlined" */
               type="primary" size="large"
