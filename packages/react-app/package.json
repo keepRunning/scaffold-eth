@@ -1,7 +1,7 @@
 {
   "name": "@scaffold-eth/react-app",
   "version": "1.0.0",
-  "homepage": ".",
+  "homepage": "https://keeprunning.github.io/scaffoldEthTest/",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -25,8 +25,8 @@
     "@uniswap/sdk": "^3.0.3",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
     "@walletconnect/web3-provider": "^1.5.0",
-    "ansi-to-html": "^0.7.1",
     "ansi_up": "^5.0.1",
+    "ansi-to-html": "^0.7.1",
     "antd": "4.16.0",
     "apollo-boost": "^0.4.9",
     "apollo-client": "^2.6.10",
@@ -37,6 +37,7 @@
     "dotenv": "^8.2.0",
     "eth-hooks": "^1.1.2",
     "ethers": "^5.3.0",
+    "gh-pages": "^3.2.3",
     "graphiql": "^1.0.5",
     "graphql": "^15.3.0",
     "isomorphic-fetch": "^3.0.0",
@@ -95,6 +96,8 @@
     "s3": "node ./scripts/s3.js",
     "ship": "yarn surge",
     "theme": "npx gulp less",
-    "watch": "node ./scripts/watch.js"
+    "watch": "node ./scripts/watch.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   }
 }
