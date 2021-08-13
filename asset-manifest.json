@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/scaffoldEthTest/static/css/main.1b31d432.chunk.css",
+    "main.js": "/scaffoldEthTest/static/js/main.278d4196.chunk.js",
+    "main.js.map": "/scaffoldEthTest/static/js/main.278d4196.chunk.js.map",
+    "runtime-main.js": "/scaffoldEthTest/static/js/runtime-main.0850a01f.js",
+    "runtime-main.js.map": "/scaffoldEthTest/static/js/runtime-main.0850a01f.js.map",
+    "static/css/2.1f31cb1c.chunk.css": "/scaffoldEthTest/static/css/2.1f31cb1c.chunk.css",
+    "static/js/2.a55a8567.chunk.js": "/scaffoldEthTest/static/js/2.a55a8567.chunk.js",
+    "static/js/2.a55a8567.chunk.js.map": "/scaffoldEthTest/static/js/2.a55a8567.chunk.js.map",
+    "index.html": "/scaffoldEthTest/index.html",
+    "static/css/2.1f31cb1c.chunk.css.map": "/scaffoldEthTest/static/css/2.1f31cb1c.chunk.css.map",
+    "static/css/main.1b31d432.chunk.css.map": "/scaffoldEthTest/static/css/main.1b31d432.chunk.css.map",
+    "static/js/2.a55a8567.chunk.js.LICENSE.txt": "/scaffoldEthTest/static/js/2.a55a8567.chunk.js.LICENSE.txt",
+    "static/media/AnsiImageRender.css": "/scaffoldEthTest/static/media/TopazPlus_a500_v1.0.aa8064ac.woff"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0850a01f.js",
+    "static/css/2.1f31cb1c.chunk.css",
+    "static/js/2.a55a8567.chunk.js",
+    "static/css/main.1b31d432.chunk.css",
+    "static/js/main.278d4196.chunk.js"
+  ]
+}
