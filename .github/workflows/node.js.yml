@@ -14,6 +14,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./packages/react-app
+        
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
